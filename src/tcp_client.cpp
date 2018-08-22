@@ -1,4 +1,12 @@
 ﻿#include "tcp_client.h"
+#include "mock_tcp_server.hpp"
+
+#include <QTime>
+#include <QDebug>
+#include <QTcpSocket>
+#include <QHostAddress>
+
+using namespace nlohmann;
 
 void TCPClient::setMockTCPServer(MockTCPServer *_server) {
     m_pMockTCPServer = _server;
@@ -12,6 +20,7 @@ TCPClient::TCPClient(QObject *_parent) :
 
 TCPClient::~TCPClient() {
     delete m_pSocket;
+    delete m_pMockTCPServer;
 }
 
 void TCPClient::connectToHost(const QString &_hostAddressString, const quint16 &_port) {
@@ -27,13 +36,14 @@ void TCPClient::connectToHost(const QString &_hostAddressString, const quint16 &
 
 void TCPClient::send(const json &_sendedPackage) {
     // pack to binary
-    std::string packed = jsonToMsgpack(_sendedPackage);
+    std::string packed = "0000" + jsonToMsgpack(_sendedPackage);
 
     if (m_pMockTCPServer != nullptr) {
         m_pMockTCPServer->onReceived(packed);
         onReceived();
     } else {
         // send to server
+        std::cout << packed << std::endl;
         m_pSocket->write(packed.c_str(), packed.size());
     }
 }
@@ -47,16 +57,19 @@ void TCPClient::onConnected() {
 void TCPClient::onReceived() {
     std::string receivedPackageStdString = "";
     if (m_pMockTCPServer != nullptr) {
+        // use send() of mock server
         receivedPackageStdString = m_pMockTCPServer->send();
     } else {
         // read received package
+        std::cout << receivedPackageStdString << std::endl;
         receivedPackageStdString = m_pSocket->readAll().toStdString();
+        receivedPackageStdString = receivedPackageStdString.substr(4, receivedPackageStdString.size() - 4);
+        std::cout << receivedPackageStdString << std::endl;
     }
 
-    // TODO: header/payload parsing
-
-    // unpack to json;
+    // unpack to json
     json unpacked = json::from_msgpack(receivedPackageStdString);
+    std::cout << unpacked << std::endl;
     emit received(unpacked);
 }
 

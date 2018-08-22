@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+using namespace nlohmann;
+
 InstanceMessenger::InstanceMessenger(TCPClient *_tcpClient, QObject *_parent) :
     QObject(_parent),
     m_pTCPClient(_tcpClient) {
@@ -24,35 +26,71 @@ void InstanceMessenger::sendHello() {
 
 void InstanceMessenger::receiveWorld(json _json) {
     m_worldStdString = _json[RESULT];
-    std::cout << _json << std::endl;
+    std::cout << m_worldStdString << std::endl;
 }
 
-void InstanceMessenger::sendPhoneNumber() {
-    // configure json package
-    json jsonPhoneNumber;
-    jsonPhoneNumber[PHONE_NUMBER] = m_clientData.m_phoneNumber.toStdString();
+void InstanceMessenger::sendRequestCode() {
+    // configure payload part
+    json payload;
+    payload[PHONE_NUMBER] = m_clientData.m_phoneNumber.toStdString();
+    payload[TYPE] = REGISTER;
+
+    // configure header
+    json header;
+    header[COMMAND] = CMD_REQUEST_CODE;
+
+    // configure result package
+    json resultPackage;
+    resultPackage = header;
+    resultPackage[PAYLOAD] = payload;
 
     // send json
-    m_pTCPClient->send(jsonPhoneNumber);
+    m_pTCPClient->send(resultPackage);
 }
 
-void InstanceMessenger::sendCode() {
-    // configure json package
-    json jsonCode;
-    jsonCode[CODE] = m_smsCode;
+void InstanceMessenger::sendRequestJWT() {
+    // configure payload part
+    json payload;
+    payload[TYPE] = REGISTER;
+    payload[CODE] = m_smsCode.toStdString();
+    payload[RESET_PASSWORD] = false;
+    payload[RESTORE] = false;
+    payload[TOKEN] = m_tempToken.toStdString();
+
+    // configure header
+    json header;
+    header[COMMAND] = CMD_REQUEST_JWT;
+
+    // configure result package
+    json resultPackage;
+    resultPackage = header;
+    resultPackage[PAYLOAD] = payload;
 
     // send json
-    m_pTCPClient->send(jsonCode);
+    m_pTCPClient->send(resultPackage);
 }
 
-void InstanceMessenger::sendAuthorizationToken() {
-    // configure json package
-    json jsonAuthorizationToken;
-    jsonAuthorizationToken[AUTH_TOKEN] = m_authorizationToken.toStdString();
+void InstanceMessenger::sendPresence() {
+    // configure payload part
+    json payload;
+    payload[JWT] = m_jwt.toStdString();
+
+    // configure header
+    json header;
+    header[COMMAND] = CMD_PRESENCE;
+
+    // configure result package
+    json resultPackage;
+    resultPackage = header;
+    resultPackage[PAYLOAD] = payload;
 
     // send json
-    m_pTCPClient->send(jsonAuthorizationToken);
+    m_pTCPClient->send(resultPackage);
 }
+
+
+
+
 
 void InstanceMessenger::sendMessage(const QString &_to, const QString &_message) {
     // create new dialog item and save that to local storage
@@ -63,7 +101,7 @@ void InstanceMessenger::sendMessage(const QString &_to, const QString &_message)
 
     // configure json package
     json jsonMessage;
-    jsonMessage[AUTH_TOKEN] = m_authorizationToken.toStdString();
+    jsonMessage[AUTH_TOKEN] = m_jwt.toStdString();
     jsonMessage[SENDER]     = getNikName().toStdString();
     jsonMessage[RECEIVER]   = lastDialog.m_dialogName.toStdString();
     jsonMessage[MESSAGE]    = lastDialog.m_message.toStdString();
@@ -76,7 +114,7 @@ void InstanceMessenger::sendMessage(const QString &_to, const QString &_message)
 void InstanceMessenger::sendRequestByCommand(const int &_command) {
     // configure json package
     json jsonCommand;
-    jsonCommand[AUTH_TOKEN] = m_authorizationToken.toStdString();  // set auth token
+    jsonCommand[AUTH_TOKEN] = m_jwt.toStdString();  // set auth token
     jsonCommand[COMMAND]    = _command;                            // set command
 
     // send json
@@ -111,33 +149,39 @@ void InstanceMessenger::addNewMessage(const QString &_message, const QString &_f
 }
 
 void InstanceMessenger::onReceived(json _receivedPackage) {
-    if (_receivedPackage.find(CODE) != _receivedPackage.end()) {
-        receiveCode(_receivedPackage);
-    } else if (_receivedPackage.find(AUTH_TOKEN) != _receivedPackage.end()) {
-        receiveAuthorizationToken(_receivedPackage);
-    } else if (_receivedPackage.find(AUTH_STATUS) != _receivedPackage.end()) {
-        receiveAuthorizationStatus(_receivedPackage);
-    } else if (_receivedPackage.find(SENDER) != _receivedPackage.end()) {
-        receiveNewMessage(_receivedPackage);
-    } else if (_receivedPackage.find(CONTACTS) != _receivedPackage.end()) {
-        receiveContactList(_receivedPackage);
-    } else if (_receivedPackage.find(DIALOG) != _receivedPackage.end()) {
-        receiveDialog(_receivedPackage);
-    } else if (_receivedPackage.find(RESULT) != _receivedPackage.end()) {
-        receiveWorld(_receivedPackage);
-    }
+//    std::cout << _receivedPackage << std::endl;
+//    receiveWorld(_receivedPackage);
+//    receiveTempToken(_receivedPackage);
+//    receiveJWT(_receivedPackage);
+    receivePresence(_receivedPackage);
 }
 
+void InstanceMessenger::receiveTempToken(json &_json) {
+    m_tempToken = QString::fromStdString(_json[RESULT]);
+    std::cout << m_tempToken.toStdString() << std::endl;
+}
+
+void InstanceMessenger::receiveJWT(json &_json) {
+    m_jwt = QString::fromStdString(_json[RESULT]);
+    std::cout << m_jwt.toStdString() << std::endl;
+}
+
+void InstanceMessenger::receivePresence(json &_json) {
+    m_authorizationStatus = QString::fromStdString(_json[RESULT]);
+    std::cout << m_authorizationStatus.toStdString() << std::endl;
+}
+
+
 void InstanceMessenger::receiveCode(json &_json) {
-    m_smsCode = _json[CODE];
+    // m_smsCode = _json[CODE];
 }
 
 void InstanceMessenger::receiveAuthorizationToken(json &_json) {
-    m_authorizationToken = QString::fromStdString(_json[AUTH_TOKEN]);
+    m_jwt = QString::fromStdString(_json[AUTH_TOKEN]);
 }
 
 void InstanceMessenger::receiveAuthorizationStatus(json &_json) {
-    m_authorizationStatus = _json[AUTH_STATUS];
+//    m_authorizationStatus = _json[AUTH_STATUS];
 }
 
 void InstanceMessenger::receiveContactList(json &_json) {
@@ -168,7 +212,7 @@ json InstanceMessenger::getJsonFromString(const std::string &_strName, const std
 }
 
 json InstanceMessenger::getPhoneNumberJson() const {
-    return getJsonFromString(QString("phoneNumber"), getPhoneNumber());
+    return getJsonFromString(QString::fromStdString(PHONE_NUMBER), getPhoneNumber());
 }
 
 json InstanceMessenger::getNikNameJson() const {

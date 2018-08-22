@@ -2,6 +2,7 @@
 #define INSTANCEMESSENGER_H
 
 #include <QObject>
+#include <QMap>
 #include <QDateTime>
 #include <QString>
 
@@ -13,12 +14,26 @@
 static const std::string CODE         = "code";
 static const std::string AUTH_TOKEN   = "auth_token";
 static const std::string AUTH_STATUS  = "auth_tatus";
-static const std::string PHONE_NUMBER = "phone_number";
+static const std::string PHONE_NUMBER = "phone";
+static const std::string TYPE         = "type";
+static const std::string REGISTER     = "register";
 static const std::string SENDER       = "sender";
 static const std::string RECEIVER     = "receiver";
 static const std::string MESSAGE      = "message";
 static const std::string DATE_TIME    = "date_time";
-static const std::string COMMAND      = "command";
+
+static const std::string COMMAND = "command";
+static const std::string CMD_REQUEST_CODE = "request_code";
+static const std::string CMD_REQUEST_JWT  = "request_jwt";
+static const std::string CMD_PRESENCE  = "presence";
+
+static const std::string PAYLOAD = "payload";
+
+static const std::string RESET_PASSWORD = "reset_password";
+static const std::string RESTORE        = "restore";
+static const std::string TOKEN          = "token";
+static const std::string JWT            = "jwt";
+
 static const std::string RESULT       = "result";
 static const std::string CONTACTS     = "contacts";
 static const std::string DIALOG       = "dialog";
@@ -56,12 +71,12 @@ public:
 
 public:
     void sendHello();
-    void receiveWorld(json _json);
+    void receiveWorld(nlohmann::json _json);
 
 public:
-    void sendPhoneNumber();
-    void sendCode();
-    void sendAuthorizationToken();
+    void sendRequestCode();
+    void sendRequestJWT();
+    void sendPresence();
     void sendMessage(const QString &_to, const QString &_message);
 
 public:
@@ -70,15 +85,18 @@ public:
     void sendRequestForDialog();
 
 public:
-    QString getAuthorizationToken() const { return m_authorizationToken; }
-    bool getAuthorizationStatus() const { return m_authorizationStatus; }
+    QString getJWT() const { return m_jwt; }
+    QString getTempToken() const { return m_tempToken; }
+    QString getAuthorizationStatus() const { return m_authorizationStatus; }
     QString getPhoneNumber() const { return m_clientData.m_phoneNumber; }
     QString getNikName() const { return m_clientData.m_nikName; }
     QString getFirstName() const { return m_clientData.m_firstName; }
     QString getSecondName() const { return m_clientData.m_secondName; }
 
 public:
-    void setAuthorizationToken(const QString &_authToken) { m_authorizationToken = _authToken; }
+    void setCode(const QString &_code) { m_smsCode = _code; }
+    void setJWT(const QString &_authToken) { m_jwt = _authToken; }
+    void setTempToken(const QString &_authToken) { m_tempToken = _authToken; }
     void setPhoneNumber(const QString &_phoneNumber) { m_clientData.m_phoneNumber = _phoneNumber; }
     void setNickName(const QString &_nikName) { m_clientData.m_nikName = _nikName; }
     void setFirstName(const QString &_firstName) { m_clientData.m_firstName = _firstName; }
@@ -88,33 +106,38 @@ public:
     void addNewMessage(const QString &_message, const QString &_from, const QString &_to);
 
 public slots:
-    void onReceived(json _receivedPackage);
+    void onReceived(nlohmann::json _receivedPackage);
 
 private:
-    void receiveCode(json &_json);
-    void receiveAuthorizationToken(json &_json);
-    void receiveAuthorizationStatus(json &_json);
-    void receiveContactList(json &_json);
-    void receiveDialog(json &_json);
-    void receiveNewMessage(json &_json);
+    void receiveTempToken(nlohmann::json &_json);
+    void receiveJWT(nlohmann::json &_json);
+    void receivePresence(nlohmann::json &_json);
+
+    void receiveCode(nlohmann::json &_json);
+    void receiveAuthorizationToken(nlohmann::json &_json);
+    void receiveAuthorizationStatus(nlohmann::json &_json);
+    void receiveContactList(nlohmann::json &_json);
+    void receiveDialog(nlohmann::json &_json);
+    void receiveNewMessage(nlohmann::json &_json);
 
 public:
-    static json getJsonFromString(const QString &_strName, const QString &_str);
-    static json getJsonFromString(const std::string &_strName, const std::string &_str);
+    static nlohmann::json getJsonFromString(const QString &_strName, const QString &_str);
+    static nlohmann::json getJsonFromString(const std::string &_strName, const std::string &_str);
 
 public:
-    json getPhoneNumberJson() const;
-    json getNikNameJson() const;
-    json getFirstNameJson() const;
-    json getSecondNameJson() const;
+    nlohmann::json getPhoneNumberJson() const;
+    nlohmann::json getNikNameJson() const;
+    nlohmann::json getFirstNameJson() const;
+    nlohmann::json getSecondNameJson() const;
 
 private:
     TCPClient *m_pTCPClient{nullptr};
-    QString m_authorizationToken;
-    bool m_authorizationStatus{false};
+    QString m_tempToken;
+    QString m_jwt;
+    QString m_authorizationStatus;
 
 public:
-    quint16 m_smsCode;
+    QString m_smsCode;
     UserItem m_clientData;
     QMap<QString, QList<DialogItem> > m_dialogs;
     QMap<QString, UserItem> m_contacts;
