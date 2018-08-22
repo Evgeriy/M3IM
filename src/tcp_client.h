@@ -4,7 +4,7 @@
 // QT
 #include <QObject>
 
-// CPP
+// CPP/STL
 #include <cstdio>
 
 // FORWARD DECLARATIONS

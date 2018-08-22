@@ -1,12 +1,15 @@
 ﻿#include "tcp_client.h"
-#include "mock_tcp_server.hpp"
 
+// QT
 #include <QTime>
 #include <QDebug>
 #include <QTcpSocket>
 #include <QHostAddress>
 
-using namespace nlohmann;
+// ANOTHERS
+#include "mock_tcp_server.hpp"
+
+
 
 void TCPClient::setMockTCPServer(MockTCPServer *_server) {
     m_pMockTCPServer = _server;
@@ -34,7 +37,7 @@ void TCPClient::connectToHost(const QString &_hostAddressString, const quint16 &
     connect(m_pSocket, &QTcpSocket::readyRead, this, &TCPClient::onReceived);
 }
 
-void TCPClient::send(const json &_sendedPackage) {
+void TCPClient::send(const nlohmann::json &_sendedPackage) {
     // pack to binary
     std::string packed = "0000" + jsonToMsgpack(_sendedPackage);
 
@@ -42,13 +45,17 @@ void TCPClient::send(const json &_sendedPackage) {
         m_pMockTCPServer->onReceived(packed);
         onReceived();
     } else {
+        // print debug
+        std::cout << "[Send] Json package: " << _sendedPackage << std::endl;
+        std::cout << "[Send] Msgpack package: " << packed << std::endl;
+
         // send to server
-        std::cout << packed << std::endl;
         m_pSocket->write(packed.c_str(), packed.size());
     }
 }
 
 void TCPClient::onConnected() {
+    // print debug
     // print debug
     qDebug() << "Client IP:" << m_pSocket->localAddress().toString() <<
                 "Server IP:" << m_pSocket->peerAddress().toString();
@@ -60,22 +67,31 @@ void TCPClient::onReceived() {
         // use send() of mock server
         receivedPackageStdString = m_pMockTCPServer->send();
     } else {
-        // read received package
-        std::cout << receivedPackageStdString << std::endl;
+        // read all from socket
         receivedPackageStdString = m_pSocket->readAll().toStdString();
+
+        // print debug
+        std::cout << "[Receive] Raw package: " << receivedPackageStdString << std::endl;
+
+        // remove "0000"
         receivedPackageStdString = receivedPackageStdString.substr(4, receivedPackageStdString.size() - 4);
-        std::cout << receivedPackageStdString << std::endl;
+
+        // print debug
+        std::cout << "[Receive] Msgpack package: " << receivedPackageStdString << std::endl;
     }
 
     // unpack to json
-    json unpacked = json::from_msgpack(receivedPackageStdString);
-    std::cout << unpacked << std::endl;
+    nlohmann::json unpacked = nlohmann::json::from_msgpack(receivedPackageStdString);
+
+    // print debug
+    std::cout << "[Receive] Json package: " << unpacked << std::endl;
+
     emit received(unpacked);
 }
 
-std::string TCPClient::jsonToMsgpack(const json &_json) {
+std::string TCPClient::jsonToMsgpack(const nlohmann::json &_json) {
     std::string retValue = "";
-    json::to_msgpack(_json, retValue);
+    nlohmann::json::to_msgpack(_json, retValue);
     return retValue;
 }
 

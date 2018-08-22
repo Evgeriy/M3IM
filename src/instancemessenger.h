@@ -1,15 +1,16 @@
 ﻿#ifndef INSTANCEMESSENGER_H
 #define INSTANCEMESSENGER_H
 
+// QT
 #include <QObject>
 #include <QMap>
 #include <QDateTime>
-#include <QString>
 
-#include <vector>
-#include <string>
+// FORWARD DECLARATIONS
+QT_FORWARD_DECLARE_CLASS(TCPClient)
 
-#include "tcp_client.h"
+// ANOTHERS
+#include "nlohmann/json.hpp"
 
 static const std::string CODE         = "code";
 static const std::string AUTH_TOKEN   = "auth_token";
@@ -71,18 +72,10 @@ public:
 
 public:
     void sendHello();
-    void receiveWorld(nlohmann::json _json);
 
-public:
     void sendRequestCode();
     void sendRequestJWT();
     void sendPresence();
-    void sendMessage(const QString &_to, const QString &_message);
-
-public:
-    void sendRequestByCommand(const int &_command);
-    void sendRequestForContactList();
-    void sendRequestForDialog();
 
 public:
     QString getJWT() const { return m_jwt; }
@@ -109,16 +102,11 @@ public slots:
     void onReceived(nlohmann::json _receivedPackage);
 
 private:
+    void receiveWorld(nlohmann::json _json);
+
     void receiveTempToken(nlohmann::json &_json);
     void receiveJWT(nlohmann::json &_json);
     void receivePresence(nlohmann::json &_json);
-
-    void receiveCode(nlohmann::json &_json);
-    void receiveAuthorizationToken(nlohmann::json &_json);
-    void receiveAuthorizationStatus(nlohmann::json &_json);
-    void receiveContactList(nlohmann::json &_json);
-    void receiveDialog(nlohmann::json &_json);
-    void receiveNewMessage(nlohmann::json &_json);
 
 public:
     static nlohmann::json getJsonFromString(const QString &_strName, const QString &_str);
