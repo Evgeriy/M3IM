@@ -6,8 +6,6 @@ find_package(Qt5 COMPONENTS Core REQUIRED)
 
 include_directories(${PROJECT_NAME})
 
-set (gtest_disable_pthreads on)
-
 add_subdirectory (googletest)
 config_compiler_and_linker()
 

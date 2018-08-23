@@ -21,6 +21,31 @@ InstanceMessenger::InstanceMessenger(TCPClient *_tcpClient, QObject *_parent) :
 
     m_pContactsModel = new ContactsModel();
     m_pDialogModel = new DialogModel();
+
+    m_clientData.m_id = "111";
+
+    UserItem first("First", "123");
+    m_contacts[first.m_id] = first;
+
+    UserItem second("Second", "222");
+    m_contacts[second.m_id] = second;
+
+    m_pContactsModel->addContact(first);
+    m_pContactsModel->addContact(second);
+
+    DialogItem fDialog("First dialog - first message. First dialog - first message. First dialog - first message. First dialog - first message.", "111");
+    DialogItem sDialog("First dialog - second message. First dialog - second message. First dialog - second message. First dialog - second message.", "123");
+
+    DialogItem fDialog2("Second dialog - first message. Second dialog - first message. Second dialog - first message. Second dialog - first message", "111");
+    DialogItem sDialog2("Second dialog - second message. Second dialog - second message. Second dialog - second message", "222");
+
+    m_dialogs["123"].append(fDialog);
+    m_dialogs["123"].append(sDialog);
+
+    m_dialogs["222"].append(fDialog2);
+    m_dialogs["222"].append(sDialog2);
+
+
 }
 
 InstanceMessenger::~InstanceMessenger() {
@@ -58,8 +83,10 @@ void InstanceMessenger::sendRequestCode() {
     resultPackage = header;
     resultPackage[PAYLOAD] = payload;
 
+    std::cout << resultPackage << std::endl;
+
     // send json
-    m_pTCPClient->send(resultPackage);
+   // m_pTCPClient->send(resultPackage);
 }
 
 void InstanceMessenger::sendRequestJWT() {
@@ -130,14 +157,16 @@ void InstanceMessenger::sendRequestDialog(const QString &_userId) {
     resultPackage = header;
     resultPackage[PAYLOAD] = payload;
 
+    m_pDialogModel->setDialog(m_dialogs[_userId]);
+
     // send json
-    m_pTCPClient->send(resultPackage);
+//    m_pTCPClient->send(resultPackage);
 }
 
 void InstanceMessenger::sendMessage(const QString &_message, const QString &_userId) {
     // create dialog item and add that to local storage
-    DialogItem dialogItem(_message, _userId);
-    m_dialogs[_userId].append(DialogItem(_message, _userId));
+    DialogItem dialogItem(_message, m_clientData.m_id);
+    m_dialogs[_userId].append(dialogItem);
 
     // Change model
     m_pDialogModel->addDialogItem(dialogItem);
@@ -157,7 +186,7 @@ void InstanceMessenger::sendMessage(const QString &_message, const QString &_use
     resultPackage[PAYLOAD] = payload;
 
     // send json
-    m_pTCPClient->send(resultPackage);
+    //m_pTCPClient->send(resultPackage);
 }
 
 void InstanceMessenger::onReceived(nlohmann::json _receivedPackage) {
@@ -220,7 +249,11 @@ void InstanceMessenger::receiveMessage(nlohmann::json &_json) {
 void InstanceMessenger::readJWTFromFile() {
     QFile file(m_jwtPath);
     if (file.open(QIODevice::ReadOnly)) {
+        m_clientData.m_phone = file.readLine();
+        m_clientData.m_phone.remove("\n");
         m_jwt = file.readLine();
+        m_jwt.remove("\n");
+        std::cout << m_clientData.m_phone.toStdString() << std::endl;
         std::cout << m_jwt.toStdString() << std::endl;
     }
 }
@@ -229,6 +262,7 @@ void InstanceMessenger::writeJWTToFile() {
     QFile file(m_jwtPath);
     if (file.open(QIODevice::ReadWrite)) {
         QTextStream stream(&file);
+        stream << m_clientData.m_phone << endl;
         stream << m_jwt << endl;
     }
 }

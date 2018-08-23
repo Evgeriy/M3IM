@@ -5,13 +5,15 @@ project(M3IM)
 option(Build_Src "Build source lib" ON)
 option(Build_Unit_Tests "Build unit tests" ON)
 
-set(gtest_disable_pthreads on)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt5 COMPONENTS Core Network)
+find_package(Qt5 COMPONENTS Core Network Quick REQUIRED)
 
-add_executable(${PROJECT_NAME} "main.cpp")
+add_executable(${PROJECT_NAME} "main.cpp" "qml.qrc")
 
 if (Build_Src)
     include_directories(src)
@@ -25,7 +27,8 @@ if (Build_Unit_Tests)
     target_link_libraries(${PROJECT_NAME} unit_tests)
 endif()
 
-target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5::Network)
+target_compile_definitions(${PROJECT_NAME} PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
+target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5::Network Qt5::Quick)
 
 
 

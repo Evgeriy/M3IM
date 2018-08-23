@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>ui/main.qml</file>
+        <file>ui/AuthorizationPage.qml</file>
+        <file>ui/FriendsPage.qml</file>
+        <file>ui/MessagesPage.qml</file>
+        <file>qtquickcontrols.conf</file>
+    </qresource>
+</RCC>

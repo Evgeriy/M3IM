@@ -32,18 +32,63 @@
     #endif
 #endif
 
+// CONSOLE MODE SETTINGS
+#define CONSOLE_MODE 0
+
+// QML MODE SETTINGS
+#define QML_MODE 1
+
+#if QML_MODE
+    #include <QGuiApplication>
+    #include <QQmlContext>
+    #include <QQmlComponent>
+    #include <QQmlApplicationEngine>
+
+    #include "contacts_model.hpp"
+    #include "dialogs_model.hpp"
+#endif
+
 int main(int argc, char *argv[]) {
-    QCoreApplication a(argc, argv);
 
 #if TEST_MODE
+    QCoreApplication app(argc, argv);
+
     ::testing::InitGoogleMock(&argc, argv);
     return RUN_ALL_TESTS();
-#else
+
+#elif CONSOLE_MODE
+    QCoreApplication app(argc, argv);
 
     TCPClient *client = new TCPClient();
     InstanceMessenger *messenger = new InstanceMessenger(client);
+    messenger->setJWT("eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9...");
+    messenger->writeJWTToFile();
+    messenger->sendRequestCode();
+
+#elif QML_MODE
+    // create gui app
+    QGuiApplication app(argc, argv);
+
+    // create qml engine obj
+    QQmlApplicationEngine engine;
+    engine.load(QUrl(QStringLiteral("qrc:/ui/main.qml")));
+    if (engine.rootObjects().isEmpty()) {
+        return -1;
+    }
+
+    // create tcp client and connection
+    TCPClient *client = new TCPClient();
+    //client->connectToHost("192.168.0.108", 6000);
+
+    // create messenger obj
+    InstanceMessenger *messenger = new InstanceMessenger(client);
+
+    // set messenger and models to qml context
+    engine.rootContext()->setContextProperty("client", messenger);
+    engine.rootContext()->setContextProperty("contacts", messenger->getContactsModel());
+    engine.rootContext()->setContextProperty("dialog", messenger->getDialogModel());
 
 #endif
 
-    return a.exec();
+    return app.exec();
 }

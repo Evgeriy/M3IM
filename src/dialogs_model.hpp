@@ -31,6 +31,19 @@ public:
         };
     }
 
+    void setDialog(const QList<DialogItem> &_dialog) {
+        beginResetModel();
+        m_dialog.clear();
+        endResetModel();
+
+
+        for (int i = 0; i < _dialog.size(); ++i) {
+            beginInsertRows(QModelIndex(), m_dialog.size(), m_dialog.size());
+            m_dialog.append(_dialog[i]);
+            endInsertRows();
+        }
+    }
+
     void addDialogItem(const DialogItem &_userItem) {
         if (!m_dialog.contains(_userItem)) {
             beginInsertRows(QModelIndex(), m_dialog.size(), m_dialog.size());
