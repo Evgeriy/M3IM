@@ -69,33 +69,33 @@ json getStatusJson(const bool &_status) {
 //    delete messenger;
 //}
 
-TEST(TCPClientTest, SendRequestJWT) {
-    // create client, messenger, mock_server
-    TCPClient *client = new TCPClient();
-    InstanceMessenger *messenger = new InstanceMessenger(client);
-    MockTCPServer *mock_server = new MockTCPServer();
+//TEST(TCPClientTest, SendRequestJWT) {
+//    // create client, messenger, mock_server
+//    TCPClient *client = new TCPClient();
+//    InstanceMessenger *messenger = new InstanceMessenger(client);
+//    MockTCPServer *mock_server = new MockTCPServer();
 
-    // set mock server to client
-    client->setMockTCPServer(mock_server);
+//    // set mock server to client
+//    client->setMockTCPServer(mock_server);
 
-    QString code = "3802";
-    QString tempToken = "3872115D34DF2106135E1F9E4107CAB5C170E14BC56B9D4F941C031153B8017F";
+//    QString code = "3802";
+//    QString tempToken = "3872115D34DF2106135E1F9E4107CAB5C170E14BC56B9D4F941C031153B8017F";
 
-    QString result = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9...";
+//    QString result = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9...";
 
-    messenger->setCode(code);
-    messenger->setTempToken(tempToken);
+//    messenger->setCode(code);
+//    messenger->setTempToken(tempToken);
 
-    json input = R"({
-            "command": "request_jwt",
-            "payload": {
-                "type": "register"
-                "code": "3802",
-                "reset_password": false,
-                "restore": false,
-                "token": "3872115D34DF2106135E1F9E4107CAB5C170E14BC56B9D4F941C031153B8017F"
-            }
-        })"_json;
+//    json input = R"({
+//            "command": "request_jwt",
+//            "payload": {
+//                "type": "register"
+//                "code": "3802",
+//                "reset_password": false,
+//                "restore": false,
+//                "token": "3872115D34DF2106135E1F9E4107CAB5C170E14BC56B9D4F941C031153B8017F"
+//            }
+//        })"_json;
 
 //    json output = R"({"result": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9..."})"_json;
 
@@ -113,8 +113,8 @@ TEST(TCPClientTest, SendRequestJWT) {
     // check results
     //EXPECT_EQ(messenger->getJWT(), result);
 
-    delete messenger;
-}
+//    delete messenger;
+//}
 
 //TEST(TCPClientTest, SendPresence) {
 //    // create tcp client

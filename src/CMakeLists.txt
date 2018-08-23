@@ -15,6 +15,7 @@ set(SOURCE_LIB tcp_client.h
                tcp_client.cpp
                instancemessenger.h
                instancemessenger.cpp
+               instancemessenger_global.h
                mock_tcp_server.hpp)
 
 add_library(tcp_client_lib STATIC ${SOURCE_LIB})

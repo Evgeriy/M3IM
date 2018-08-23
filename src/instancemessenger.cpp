@@ -34,7 +34,7 @@ void InstanceMessenger::receiveWorld(nlohmann::json _json) {
 void InstanceMessenger::sendRequestCode() {
     // configure payload part
     nlohmann::json payload;
-    payload[PHONE_NUMBER] = m_clientData.m_phoneNumber.toStdString();
+    payload[PHONE] = m_clientData.m_phone.toStdString();
     payload[TYPE] = REGISTER;
 
     // configure header
@@ -54,7 +54,7 @@ void InstanceMessenger::sendRequestJWT() {
     // configure payload part
     nlohmann::json payload;
     payload[TYPE] = REGISTER;
-    payload[CODE] = m_smsCode.toStdString();
+    payload[CODE] = m_code.toStdString();
     payload[RESET_PASSWORD] = false;
     payload[RESTORE] = false;
     payload[TOKEN] = m_tempToken.toStdString();
@@ -72,14 +72,14 @@ void InstanceMessenger::sendRequestJWT() {
     m_pTCPClient->send(resultPackage);
 }
 
-void InstanceMessenger::sendPresence() {
+void InstanceMessenger::sendRequestPresence() {
     // configure payload part
     nlohmann::json payload;
     payload[JWT] = m_jwt.toStdString();
 
     // configure header
     nlohmann::json header;
-    header[COMMAND] = CMD_PRESENCE;
+    header[COMMAND] = CMD_REQUEST_PRESENCE;
 
     // configure result package
     nlohmann::json resultPackage;
@@ -90,23 +90,60 @@ void InstanceMessenger::sendPresence() {
     m_pTCPClient->send(resultPackage);
 }
 
-void InstanceMessenger::addNewContact(const UserItem &_user) {
-    if (!m_contacts.contains(_user.m_nikName)) {
-        m_contacts[_user.m_nikName] = _user;
-    }
+void InstanceMessenger::sendRequestContacts() {
+    // configure header
+    nlohmann::json header;
+    header[COMMAND] = CMD_REQUEST_CONTACTS;
+
+    // configure result package
+    nlohmann::json resultPackage;
+    resultPackage = header;
+
+    // send json
+    m_pTCPClient->send(resultPackage);
 }
 
-void InstanceMessenger::addNewDialog(const DialogItem &_dialog) {
-    if (!m_dialogs.contains(_dialog.m_dialogName)) {
-        m_dialogs[_dialog.m_dialogName].append(_dialog);
-    }
+void InstanceMessenger::sendRequestDialog(const QString &_userId) {
+    // configure payload part
+    nlohmann::json payload;
+    payload[JWT] = m_jwt.toStdString();
+    payload[USER_ID] = _userId.toStdString();
+
+    // configure header
+    nlohmann::json header;
+    header[COMMAND] = CMD_REQUEST_DIALOG;
+
+    // configure result package
+    nlohmann::json resultPackage;
+    resultPackage = header;
+    resultPackage[PAYLOAD] = payload;
+
+    // send json
+    m_pTCPClient->send(resultPackage);
 }
 
-void InstanceMessenger::addNewMessage(const QString &_message, const QString &_from, const QString &_to) {
-    QString to = _from == getNikName() ? _to : _from;
-    if (m_dialogs.contains(to)) {
-        m_dialogs[to].append(DialogItem(to, _to == getNikName(), _message, QDateTime::currentDateTime()));
-    }
+void InstanceMessenger::sendMessage(const QString &_message, const QString &_userId) {
+    // create dialog item and add that to local storage
+    m_dialogs[_userId].append(DialogItem(_message, _userId));
+
+    // TODO change dialogs model
+
+    // configure payload part
+    nlohmann::json payload;
+    payload[MESSAGE] = _message.toStdString();
+    payload[USER_ID] = _userId.toStdString();
+
+    // configure header
+    nlohmann::json header;
+    header[COMMAND] = CMD_SEND_MESSAGE;
+
+    // configure result package
+    nlohmann::json resultPackage;
+    resultPackage = header;
+    resultPackage[PAYLOAD] = payload;
+
+    // send json
+    m_pTCPClient->send(resultPackage);
 }
 
 void InstanceMessenger::onReceived(nlohmann::json _receivedPackage) {
@@ -128,8 +165,39 @@ void InstanceMessenger::receiveJWT(nlohmann::json &_json) {
 }
 
 void InstanceMessenger::receivePresence(nlohmann::json &_json) {
-    m_authorizationStatus = QString::fromStdString(_json[RESULT]);
-    std::cout << m_authorizationStatus.toStdString() << std::endl;
+    m_authStatus = QString::fromStdString(_json[RESULT]);
+    std::cout << m_authStatus.toStdString() << std::endl;
+}
+
+void InstanceMessenger::receiveContacts(nlohmann::json &_json) {
+    const size_t amount = _json[RESULT].size();
+    for (size_t i = 0; i < amount; ++i) {
+        // parse phone and user_id
+        QString phone = QString::fromStdString(_json[RESULT][i][PHONE]);
+        QString id = QString::fromStdString(_json[RESULT][i][USER_ID]);
+
+        // add new user item to local storage
+        if (!m_contacts.contains(id)) {
+            m_contacts[id] = UserItem(phone, id);
+        }
+
+        // TODO change user model
+    }
+}
+
+void InstanceMessenger::receiveDialog(nlohmann::json &_json) {
+
+}
+
+void InstanceMessenger::receiveMessage(nlohmann::json &_json) {
+    // parse message and user_id
+    QString receivedMsg = QString::fromStdString(_json[MESSAGE]);
+    QString receivedUserId = QString::fromStdString(_json[USER_ID]);
+
+    // add new dialog item to local storage
+    m_dialogs[receivedUserId].append(DialogItem(receivedMsg, receivedUserId));
+
+    // TODO change dialogs model
 }
 
 nlohmann::json InstanceMessenger::getJsonFromString(const QString &_strName, const QString &_str) {
@@ -142,20 +210,6 @@ nlohmann::json InstanceMessenger::getJsonFromString(const std::string &_strName,
     return retValue;
 }
 
-nlohmann::json InstanceMessenger::getPhoneNumberJson() const {
-    return getJsonFromString(QString::fromStdString(PHONE_NUMBER), getPhoneNumber());
+nlohmann::json InstanceMessenger::getPhoneJson() const {
+    return getJsonFromString(QString::fromStdString(PHONE), getPhone());
 }
-
-nlohmann::json InstanceMessenger::getNikNameJson() const {
-    return getJsonFromString(QString("nikName"), getNikName());
-}
-
-nlohmann::json InstanceMessenger::getFirstNameJson() const {
-    return getJsonFromString(QString("firstName"), getFirstName());
-}
-
-nlohmann::json InstanceMessenger::getSecondNameJson() const {
-    return getJsonFromString(QString("secondName"), getSecondName());
-}
-
-

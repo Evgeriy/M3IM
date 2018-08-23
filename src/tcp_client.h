@@ -29,11 +29,11 @@ signals:
     void received(nlohmann::json);
 
 public:
-    virtual void connectToHost(const QString &_hostAddressString, const quint16 &_port);
+    void connectToHost(const QString &_hostAddressString, const quint16 &_port);
     virtual void send(const nlohmann::json &_sendedPackage);
 
 private slots:
-    virtual void onConnected();
+    void onConnected();
     virtual void onReceived();
 
 public:

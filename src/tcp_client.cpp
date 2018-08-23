@@ -9,8 +9,6 @@
 // ANOTHERS
 #include "mock_tcp_server.hpp"
 
-
-
 void TCPClient::setMockTCPServer(MockTCPServer *_server) {
     m_pMockTCPServer = _server;
 }
@@ -42,6 +40,7 @@ void TCPClient::send(const nlohmann::json &_sendedPackage) {
     std::string packed = "0000" + jsonToMsgpack(_sendedPackage);
 
     if (m_pMockTCPServer != nullptr) {
+        // send to mock server and receive
         m_pMockTCPServer->onReceived(packed);
         onReceived();
     } else {
@@ -56,9 +55,8 @@ void TCPClient::send(const nlohmann::json &_sendedPackage) {
 
 void TCPClient::onConnected() {
     // print debug
-    // print debug
-    qDebug() << "Client IP:" << m_pSocket->localAddress().toString() <<
-                "Server IP:" << m_pSocket->peerAddress().toString();
+    std::cout << "Client IP: " << m_pSocket->localAddress().toString().toStdString() << std::endl;
+    std::cout << "Server IP: " << m_pSocket->peerAddress().toString().toStdString() << std::endl;
 }
 
 void TCPClient::onReceived() {
