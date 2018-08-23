@@ -67,6 +67,8 @@ public:
     QString getJWT() const { return m_jwt; }
     QString getAuthStatus() const { return m_authStatus; }
     QString getPhone() const { return m_clientData.m_phone; }
+    QMap<QString, UserItem> getContacts() const { return m_contacts; }
+    QMap<QString, QList<DialogItem> > getDialogs() const { return m_dialogs; }
 
 public:
     void setCode(const QString &_code) { m_code = _code; }

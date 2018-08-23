@@ -4,9 +4,6 @@
 // QT
 #include <QObject>
 
-// CPP/STL
-#include <cstdio>
-
 // FORWARD DECLARATIONS
 QT_FORWARD_DECLARE_CLASS(QTcpSocket)
 QT_FORWARD_DECLARE_CLASS(MockTCPServer)
@@ -14,11 +11,18 @@ QT_FORWARD_DECLARE_CLASS(MockTCPServer)
 // ANOTHERS
 #include "nlohmann/json.hpp"
 
+class AbstractTCPServer {
+public:
+    virtual ~AbstractTCPServer() {}
+    virtual std::string send() = 0;
+    virtual std::string onReceived(std::string msg) = 0;
+};
+
 class TCPClient : public QObject {
     Q_OBJECT
 
 public:
-    void setMockTCPServer(MockTCPServer *_server);
+    void setMockTCPServer(AbstractTCPServer *_server);
 
 public:
     explicit TCPClient(QObject *_parent = nullptr);
@@ -41,7 +45,7 @@ public:
 
 private:
     QTcpSocket  *m_pSocket{nullptr};
-    MockTCPServer *m_pMockTCPServer{nullptr};
+    AbstractTCPServer *m_pMockTCPServer{nullptr};
 };
 
 

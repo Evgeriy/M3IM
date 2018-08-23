@@ -6,7 +6,7 @@
 static const std::string CODE         = "code";
 static const std::string AUTH_TOKEN   = "auth_token";
 static const std::string AUTH_STATUS  = "auth_tatus";
-static const std::string PHONE_NUMBER = "phone";
+static const std::string PHONE = "phone";
 static const std::string TYPE         = "type";
 static const std::string REGISTER     = "register";
 static const std::string SENDER       = "sender";

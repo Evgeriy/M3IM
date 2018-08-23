@@ -151,22 +151,20 @@ void InstanceMessenger::onReceived(nlohmann::json _receivedPackage) {
 //    receiveWorld(_receivedPackage);
 //    receiveTempToken(_receivedPackage);
 //    receiveJWT(_receivedPackage);
-    receivePresence(_receivedPackage);
+//    receivePresence(_receivedPackage);
+    receiveContacts(_receivedPackage);
 }
 
 void InstanceMessenger::receiveTempToken(nlohmann::json &_json) {
     m_tempToken = QString::fromStdString(_json[RESULT]);
-    std::cout << m_tempToken.toStdString() << std::endl;
 }
 
 void InstanceMessenger::receiveJWT(nlohmann::json &_json) {
     m_jwt = QString::fromStdString(_json[RESULT]);
-    std::cout << m_jwt.toStdString() << std::endl;
 }
 
 void InstanceMessenger::receivePresence(nlohmann::json &_json) {
     m_authStatus = QString::fromStdString(_json[RESULT]);
-    std::cout << m_authStatus.toStdString() << std::endl;
 }
 
 void InstanceMessenger::receiveContacts(nlohmann::json &_json) {

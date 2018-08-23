@@ -6,10 +6,14 @@
 #include <QTcpSocket>
 #include <QHostAddress>
 
-// ANOTHERS
-#include "mock_tcp_server.hpp"
+// CPP/STL
+#include <cstdio>
+#include <iostream>
 
-void TCPClient::setMockTCPServer(MockTCPServer *_server) {
+// ANOTHERS
+//#include "../tests/mock_tcp_server.hpp"
+
+void TCPClient::setMockTCPServer(AbstractTCPServer *_server) {
     m_pMockTCPServer = _server;
 }
 
@@ -67,16 +71,16 @@ void TCPClient::onReceived() {
     } else {
         // read all from socket
         receivedPackageStdString = m_pSocket->readAll().toStdString();
-
-        // print debug
-        std::cout << "[Receive] Raw package: " << receivedPackageStdString << std::endl;
-
-        // remove "0000"
-        receivedPackageStdString = receivedPackageStdString.substr(4, receivedPackageStdString.size() - 4);
-
-        // print debug
-        std::cout << "[Receive] Msgpack package: " << receivedPackageStdString << std::endl;
     }
+
+    // print debug
+    std::cout << "[Receive] Raw package: " << receivedPackageStdString << std::endl;
+
+    // remove "0000"
+    receivedPackageStdString = receivedPackageStdString.substr(4, receivedPackageStdString.size() - 4);
+
+    // print debug
+    std::cout << "[Receive] Msgpack package: " << receivedPackageStdString << std::endl;
 
     // unpack to json
     nlohmann::json unpacked = nlohmann::json::from_msgpack(receivedPackageStdString);
@@ -92,4 +96,3 @@ std::string TCPClient::jsonToMsgpack(const nlohmann::json &_json) {
     nlohmann::json::to_msgpack(_json, retValue);
     return retValue;
 }
-
