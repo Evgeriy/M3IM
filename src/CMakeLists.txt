@@ -10,7 +10,11 @@ set(SOURCE_LIB tcp_client.h
                tcp_client.cpp
                instancemessenger.h
                instancemessenger.cpp
-               instancemessenger_global.h)
+               instancemessenger_global.h
+
+               contacts_model.hpp
+               dialogs_model.hpp
+               )
 
 add_library(tcp_client_lib STATIC ${SOURCE_LIB})
 

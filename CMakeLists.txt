@@ -9,7 +9,7 @@ set(gtest_disable_pthreads on)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
-find_package(Qt5Core)
+find_package(Qt5 COMPONENTS Core Network)
 
 add_executable(${PROJECT_NAME} "main.cpp")
 
@@ -25,8 +25,7 @@ if (Build_Unit_Tests)
     target_link_libraries(${PROJECT_NAME} unit_tests)
 endif()
 
-
-target_link_libraries(${PROJECT_NAME} Qt5::Core)
+target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5::Network)
 
 
 

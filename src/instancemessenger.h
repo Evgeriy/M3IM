@@ -8,6 +8,8 @@
 
 // FORWARD DECLARATIONS
 QT_FORWARD_DECLARE_CLASS(TCPClient)
+QT_FORWARD_DECLARE_CLASS(ContactsModel)
+QT_FORWARD_DECLARE_CLASS(DialogModel)
 
 // ANOTHERS
 #include "instancemessenger_global.h"
@@ -19,6 +21,10 @@ public:
     UserItem(const QString &_phone, const QString &_id) :
         m_phone(_phone),
         m_id(_id) {}
+
+    bool operator==(const UserItem &_other) const {
+        return this->m_id == _other.m_id && this->m_phone == _other.m_phone;
+    }
 
 public:
     QString m_phone;
@@ -90,8 +96,12 @@ private:
     void receiveMessage(nlohmann::json &_json);
 
 private:
+    void readJWTFromFile();
+    void writeJWTToFile();
+
+private:
     TCPClient *m_pTCPClient{nullptr};   // socket
-    QString m_code;                  // sms_code (should received from server with code request)
+    QString m_code;                     // sms code (should received from server with code request)
     QString m_tempToken;                // temp token (should received from server with code request)
     QString m_jwt;                      // jwt token (should received from server with jwt request)
     QString m_authStatus;               // authorization status (should received from server with presence request)
@@ -101,7 +111,11 @@ private:
     QMap<QString, UserItem> m_contacts;          // map of contacts - key - user_id, value - userItem obj
     QMap<QString, QList<DialogItem> > m_dialogs; // map of dialogs  - key - user_id, value - list of dialogItem obj
 
+    ContactsModel *m_pContactsModel;
+    DialogModel *m_pDialogModel;
+
     std::string m_worldStdString{""};
+    QString m_jwtPath{"token.jwt"};
 
 public:
     static nlohmann::json getJsonFromString(const QString &_strName, const QString &_str);

@@ -1,20 +1,32 @@
 ﻿#include "instancemessenger.h"
 
+// QT
+#include <QFile>
+#include <QTextStream>
+
 // CPP/STL
 #include <iostream>
 
 // ANOTHERS
 #include "tcp_client.h"
+#include "contacts_model.hpp"
+#include "dialogs_model.hpp"
 
 InstanceMessenger::InstanceMessenger(TCPClient *_tcpClient, QObject *_parent) :
     QObject(_parent),
     m_pTCPClient(_tcpClient) {
 
+    readJWTFromFile();
     connect(m_pTCPClient, &TCPClient::received, this, &InstanceMessenger::onReceived);
+
+    m_pContactsModel = new ContactsModel();
+    m_pDialogModel = new DialogModel();
 }
 
 InstanceMessenger::~InstanceMessenger() {
     delete m_pTCPClient;
+    delete m_pContactsModel;
+    delete m_pDialogModel;
 }
 
 void InstanceMessenger::sendHello() {
@@ -124,9 +136,11 @@ void InstanceMessenger::sendRequestDialog(const QString &_userId) {
 
 void InstanceMessenger::sendMessage(const QString &_message, const QString &_userId) {
     // create dialog item and add that to local storage
+    DialogItem dialogItem(_message, _userId);
     m_dialogs[_userId].append(DialogItem(_message, _userId));
 
-    // TODO change dialogs model
+    // Change model
+    m_pDialogModel->addDialogItem(dialogItem);
 
     // configure payload part
     nlohmann::json payload;
@@ -161,6 +175,7 @@ void InstanceMessenger::receiveTempToken(nlohmann::json &_json) {
 
 void InstanceMessenger::receiveJWT(nlohmann::json &_json) {
     m_jwt = QString::fromStdString(_json[RESULT]);
+    writeJWTToFile();
 }
 
 void InstanceMessenger::receivePresence(nlohmann::json &_json) {
@@ -173,13 +188,15 @@ void InstanceMessenger::receiveContacts(nlohmann::json &_json) {
         // parse phone and user_id
         QString phone = QString::fromStdString(_json[RESULT][i][PHONE]);
         QString id = QString::fromStdString(_json[RESULT][i][USER_ID]);
+        UserItem userItem(phone, id);
 
         // add new user item to local storage
         if (!m_contacts.contains(id)) {
-            m_contacts[id] = UserItem(phone, id);
+            m_contacts[id] = userItem;
         }
 
         // TODO change user model
+        m_pContactsModel->addContact(userItem);
     }
 }
 
@@ -191,11 +208,29 @@ void InstanceMessenger::receiveMessage(nlohmann::json &_json) {
     // parse message and user_id
     QString receivedMsg = QString::fromStdString(_json[MESSAGE]);
     QString receivedUserId = QString::fromStdString(_json[USER_ID]);
+    DialogItem dialogItem(receivedMsg, receivedUserId);
 
     // add new dialog item to local storage
-    m_dialogs[receivedUserId].append(DialogItem(receivedMsg, receivedUserId));
+    m_dialogs[receivedUserId].append(dialogItem);
 
-    // TODO change dialogs model
+    // Change model
+    m_pDialogModel->addDialogItem(dialogItem);
+}
+
+void InstanceMessenger::readJWTFromFile() {
+    QFile file(m_jwtPath);
+    if (file.open(QIODevice::ReadOnly)) {
+        m_jwt = file.readLine();
+        std::cout << m_jwt.toStdString() << std::endl;
+    }
+}
+
+void InstanceMessenger::writeJWTToFile() {
+    QFile file(m_jwtPath);
+    if (file.open(QIODevice::ReadWrite)) {
+        QTextStream stream(&file);
+        stream << m_jwt << endl;
+    }
 }
 
 nlohmann::json InstanceMessenger::getJsonFromString(const QString &_strName, const QString &_str) {

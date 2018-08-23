@@ -1,11 +1,13 @@
 ﻿// QT
 #include <QCoreApplication>
+#include <QFile>
+#include <QDebug>
 
 // ANOTHERS
 #include "mock_tcp_server.hpp"
 
 // TEST BUILD SETTINGS
-#define TEST_MODE             1
+#define TEST_MODE             0
 #define TEST_REQUEST_CODE     0
 #define TEST_REQUEST_JWT      0
 #define TEST_REQUEST_PRESENCE 0
@@ -38,6 +40,8 @@ int main(int argc, char *argv[]) {
     return RUN_ALL_TESTS();
 #else
 
+    TCPClient *client = new TCPClient();
+    InstanceMessenger *messenger = new InstanceMessenger(client);
 
 #endif
 
