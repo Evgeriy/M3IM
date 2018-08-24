@@ -32,7 +32,7 @@ Page {
     }
 
     function getHeader() {
-        return client.getActiveDialog();
+        return String(client.getActiveDialog());
     }
 
     ListView {

@@ -198,6 +198,11 @@ void InstanceMessenger::sendMessage(const QString &_message, const int &_userId)
     m_pTCPClient->send(resultPackage);
 }
 
+void InstanceMessenger::setActiveDialog(const int &_userId) {
+    m_activeDialog = _userId;
+    m_pDialogModel->setDialog(m_dialogs[m_activeDialog]);
+}
+
 void InstanceMessenger::onSocketStateChanged(QAbstractSocket::SocketState _socketState) {
     switch(_socketState) {
     case QAbstractSocket::UnconnectedState:
@@ -384,7 +389,7 @@ void InstanceMessenger::processReceivedMessage(nlohmann::json &_json) {
 
     DialogItem dialogItem(receivedMsg, senderUserId);
 
-    if (senderUserId == m_clientData.m_id) {
+    if (m_contacts.contains(senderUserId) && m_clientData.m_phone == m_contacts[senderUserId].m_phone) {
         return;
     }
 

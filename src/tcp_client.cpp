@@ -112,9 +112,10 @@ void TCPClient::onReceived() {
         // read from socket
         while (true) {
             if (!m_nextBlockSize) {
-                if (m_pSocket->bytesAvailable() < sizeof(qint16)) {
+                if (m_pSocket->size() < 4) {
                     break;
                 }
+
                 char sizePart[4];
                 m_pSocket->read(sizePart, 4);
                 m_nextBlockSize = static_cast<quint16>(std::atoi(sizePart));
@@ -123,7 +124,7 @@ void TCPClient::onReceived() {
                 std::cout << "[Receive] Package size: " << m_nextBlockSize << std::endl;
             }
 
-            if (m_pSocket->bytesAvailable() < m_nextBlockSize) {
+            if (m_pSocket->size() < m_nextBlockSize) {
                 break;
             }
 

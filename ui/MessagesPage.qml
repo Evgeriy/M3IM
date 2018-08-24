@@ -77,7 +77,7 @@ Page {
                         font.bold: false
 
                         Rectangle {
-                            border.color: String(model.userId) === dialogHeaderLabel.text ? "#1e90ff" : "lightgray"
+                            border.color: String(model.userId) === dialogHeaderLabel.text ? "#70ee90" : "lightgray"
                             border.width: 1
                             radius: 15
                             width: parent.contentWidth + 20

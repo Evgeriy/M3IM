@@ -98,7 +98,7 @@ public:
     Q_INVOKABLE ContactsModel* getContactsModel() { return m_pContactsModel; }
     Q_INVOKABLE DialogModel* getDialogModel() { return m_pDialogModel; }
 
-    Q_INVOKABLE QString getActiveDialog() const { return m_activeDialog; }
+    Q_INVOKABLE int getActiveDialog() const { return m_activeDialog; }
 
 public:
     Q_INVOKABLE void setCode(const QString &_code) { m_code = _code; }
@@ -106,7 +106,7 @@ public:
     Q_INVOKABLE void setJWT(const QString &_jwt) { m_jwt = _jwt; }
     Q_INVOKABLE void setAuthStatus(const bool &_status) { m_clientData.m_phone = _status; emit authStatusChanged(); }
     Q_INVOKABLE void setPhone(const QString &_phone) { m_clientData.m_phone = _phone; }
-    Q_INVOKABLE void setActiveDialog(const QString &_dialog) { m_activeDialog = _dialog; }
+    Q_INVOKABLE void setActiveDialog(const int &_userId);
 
 public slots:
     void onSocketStateChanged(QAbstractSocket::SocketState _socketState);
@@ -145,7 +145,7 @@ private:
     QMap<int, QList<DialogItem> > m_dialogs; // map of dialogs  - key - user_id, value - list of dialogItem obj
 
 public:
-    QString m_activeDialog;
+    int m_activeDialog;
 
 public:
     ContactsModel *m_pContactsModel;
