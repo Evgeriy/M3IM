@@ -20,14 +20,16 @@ class ContactsModel : public QAbstractListModel {
 public:
     enum ContactsRoles {
         Phone = Qt::UserRole + 1,
-        UserId
+        UserId,
+        Online
     };
 
 //    using QAbstractListModel::QAbstractListModel;
 
     QHash<int,QByteArray> roleNames() const override {
         return { { Phone, "phone" },
-                 { UserId, "userId" }
+                 { UserId, "userId" },
+                 { Online, "online" }
         };
     }
 
@@ -60,6 +62,9 @@ public:
         case UserId:
             item.m_id = value.toInt();
             break;
+        case Online:
+            item.m_isOnline = value.toBool();
+            break;
         default:
             return false;
         }
@@ -78,6 +83,8 @@ public:
             return item.m_phone;
         case UserId:
             return item.m_id;
+        case Online:
+            return item.m_isOnline;
         default:
             return {};
         }

@@ -21,6 +21,7 @@ InstanceMessenger::InstanceMessenger(TCPClient *_tcpClient, QObject *_parent) :
     connect(m_pTCPClient, &TCPClient::statusChanged, this, &InstanceMessenger::onSocketStateChanged);
 
 
+    m_clientData.m_isOnline = true;
     m_pContactsModel = new ContactsModel();
     m_pDialogModel = new DialogModel();
 
@@ -234,56 +235,70 @@ std::string InstanceMessenger::getDescription(const nlohmann::json &_json) const
 }
 
 int InstanceMessenger::getCode(const nlohmann::json &_json) const {
-    return _json[CODE];
+    if (_json.find(CODE) != _json.end()) {
+        return _json[CODE];
+    } else {
+        return -1;
+    }
+
 }
 
-
 void InstanceMessenger::onReceived(nlohmann::json _receivedPackage) {
-    switch(getCode(_receivedPackage)) {
-    case OK:
-        std::cout << "[InstanceMessenger::onReceived] " << "Response code " << OK << std::endl;
+    if (getCode(_receivedPackage) == -1) {
+        std::cout << "[InstanceMessenger::onReceived] " << "Server message!" << std::endl;
 
-        if (getCommand(_receivedPackage) == CMD_HELLO) {
-            processResponseToRequestHello(_receivedPackage);
-        } else if (getCommand(_receivedPackage) == CMD_REQUEST_CODE) {
-            processResponseToRequestCode(_receivedPackage);
-        } else if (getCommand(_receivedPackage) == CMD_REQUEST_JWT) {
-            processResponseToRequestJWT(_receivedPackage);
-        } else if (getCommand(_receivedPackage) == CMD_REQUEST_PRESENCE) {
-            processResponseToPresence(_receivedPackage);
-        } else if (getCommand(_receivedPackage) == CMD_REQUEST_CONTACTS) {
-            processResponseToContacts(_receivedPackage);
-        } else if (getCommand(_receivedPackage) == CMD_REQUEST_DIALOG) {
-            processResponseToDialog(_receivedPackage);
-        } else if (getCommand(_receivedPackage) == CMD_SEND_MESSAGE) {
-            processResponseToSendMessage(_receivedPackage);
+        if (getCommand(_receivedPackage) == NEW_MESSAGE) {
+            processReceivedMessage(_receivedPackage);
         }
 
-        break;
-    case PARTIAL_CONTENT:
-        std::cout << "[InstanceMessenger::onReceived] " << "Response code: " << PARTIAL_CONTENT << std::endl;
-        break;
-    case MOVED_PERMANENTLY:
-        std::cout << "[InstanceMessenger::onReceived] " << "Response code: " << MOVED_PERMANENTLY << std::endl;
-        break;
-    case FOUND:
-        std::cout << "[InstanceMessenger::onReceived] " << "Response code: " << FOUND << std::endl;
-        break;
-    case NOT_MODIFIED:
-        std::cout << "[InstanceMessenger::onReceived] " << "Response code: " << NOT_MODIFIED << std::endl;
-        break;
-    case FORBIDDEN:
-        std::cout << "[InstanceMessenger::onReceived] " << "Response code: " << FORBIDDEN << std::endl;
-        break;
-    case NOT_FOUND:
-        std::cout << "[InstanceMessenger::onReceived] " << "Response code: " << NOT_FOUND << std::endl;
-        break;
-    case INTERNAL_SERVER_ERROR:
-        std::cout << "[InstanceMessenger::onReceived] " << "Response code: " << INTERNAL_SERVER_ERROR << std::endl;
-        break;
-    default:
-        std::cout << "[InstanceMessenger::onReceived] " << "Undefined response code!" << std::endl;
-        break;
+    } else {
+        // RESPONSES
+        switch(getCode(_receivedPackage)) {
+        case OK:
+            std::cout << "[InstanceMessenger::onReceived] " << "Response code " << OK << std::endl;
+
+            if (getCommand(_receivedPackage) == CMD_HELLO) {
+                processResponseToRequestHello(_receivedPackage);
+            } else if (getCommand(_receivedPackage) == CMD_REQUEST_CODE) {
+                processResponseToRequestCode(_receivedPackage);
+            } else if (getCommand(_receivedPackage) == CMD_REQUEST_JWT) {
+                processResponseToRequestJWT(_receivedPackage);
+            } else if (getCommand(_receivedPackage) == CMD_REQUEST_PRESENCE) {
+                processResponseToPresence(_receivedPackage);
+            } else if (getCommand(_receivedPackage) == CMD_REQUEST_CONTACTS) {
+                processResponseToContacts(_receivedPackage);
+            } else if (getCommand(_receivedPackage) == CMD_REQUEST_DIALOG) {
+                processResponseToDialog(_receivedPackage);
+            } else if (getCommand(_receivedPackage) == CMD_SEND_MESSAGE) {
+                processResponseToSendMessage(_receivedPackage);
+            }
+
+            break;
+        case PARTIAL_CONTENT:
+            std::cout << "[InstanceMessenger::onReceived] " << "Response code: " << PARTIAL_CONTENT << std::endl;
+            break;
+        case MOVED_PERMANENTLY:
+            std::cout << "[InstanceMessenger::onReceived] " << "Response code: " << MOVED_PERMANENTLY << std::endl;
+            break;
+        case FOUND:
+            std::cout << "[InstanceMessenger::onReceived] " << "Response code: " << FOUND << std::endl;
+            break;
+        case NOT_MODIFIED:
+            std::cout << "[InstanceMessenger::onReceived] " << "Response code: " << NOT_MODIFIED << std::endl;
+            break;
+        case FORBIDDEN:
+            std::cout << "[InstanceMessenger::onReceived] " << "Response code: " << FORBIDDEN << std::endl;
+            break;
+        case NOT_FOUND:
+            std::cout << "[InstanceMessenger::onReceived] " << "Response code: " << NOT_FOUND << std::endl;
+            break;
+        case INTERNAL_SERVER_ERROR:
+            std::cout << "[InstanceMessenger::onReceived] " << "Response code: " << INTERNAL_SERVER_ERROR << std::endl;
+            break;
+        default:
+            std::cout << "[InstanceMessenger::onReceived] " << "Undefined response code!" << std::endl;
+            break;
+        }
     }
 }
 
@@ -327,6 +342,7 @@ void InstanceMessenger::processResponseToContacts(nlohmann::json &_json) {
         }
 
         UserItem userItem(phone, id);
+        userItem.m_isOnline = users[i][ONLINE];
 
         // add new user item to local storage
         if (!m_contacts.contains(id)) {
@@ -353,18 +369,18 @@ void InstanceMessenger::processReceivedMessage(nlohmann::json &_json) {
 
     QString receivedMsg = QString::fromStdString(payload[MESSAGE]);
 
-    int userId = 0;
-    if (payload[USER_ID].type() == nlohmann::detail::value_t::string) {
-        std::string idStr = payload[USER_ID];
-        userId = std::atoi(idStr.c_str());
-    } else if (payload[USER_ID].type() == nlohmann::detail::value_t::number_integer) {
-        userId = payload[USER_ID];
+    int senderUserId = 0;
+    if (payload[SENDER_USER_ID].type() == nlohmann::detail::value_t::string) {
+        std::string idStr = payload[SENDER_USER_ID];
+        senderUserId = std::atoi(idStr.c_str());
+    } else if (payload[SENDER_USER_ID].type() == nlohmann::detail::value_t::number_integer) {
+        senderUserId = payload[SENDER_USER_ID];
     }
 
-    DialogItem dialogItem(receivedMsg, userId);
+    DialogItem dialogItem(receivedMsg, senderUserId);
 
     // add new dialog item to local storage
-    m_dialogs[userId].append(dialogItem);
+    m_dialogs[senderUserId].append(dialogItem);
 
     // Change model
     m_pDialogModel->addDialogItem(dialogItem);

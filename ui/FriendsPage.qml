@@ -60,7 +60,7 @@ Page {
 
                     RoundButton {
                         background: Rectangle {
-                            color: "#100000FF"
+                            color: model.online ? "#90ee90" : "#100000FF"
                             border.color: "#1e90ff"
                             border.width: 1
                             radius: 100

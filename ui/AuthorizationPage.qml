@@ -44,7 +44,6 @@ Page {
     }
 
     GridLayout {
-
         id: gridLayoutAuthorizationPage
 
         anchors {

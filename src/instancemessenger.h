@@ -35,6 +35,7 @@ public:
     QString m_nikName;
     QString m_firstName;
     QString m_secondName;
+    bool m_isOnline{false};
 };
 
 struct DialogItem {

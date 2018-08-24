@@ -38,9 +38,11 @@ static const std::string RECEIVER     = "receiver";
 static const std::string MESSAGE      = "message";
 static const std::string DATE_TIME    = "date_time";
 
+static const std::string NEW_MESSAGE      = "new_message";
 
-
+static const std::string ONLINE  = "online";
 static const std::string USER_ID  = "user_id";
+static const std::string SENDER_USER_ID  = "sender_user_id";
 
 static const std::string PAYLOAD = "payload";
 static const std::string USERS = "users";
