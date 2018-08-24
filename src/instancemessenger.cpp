@@ -256,6 +256,7 @@ void InstanceMessenger::onReceived(nlohmann::json _receivedPackage) {
         switch(getCode(_receivedPackage)) {
         case OK:
             std::cout << "[InstanceMessenger::onReceived] " << "Response code " << OK << std::endl;
+            std::cout << "[InstanceMessenger::onReceived] " << "Response message: " << _receivedPackage << std::endl;
 
             if (getCommand(_receivedPackage) == CMD_HELLO) {
                 processResponseToRequestHello(_receivedPackage);
@@ -341,6 +342,10 @@ void InstanceMessenger::processResponseToContacts(nlohmann::json &_json) {
             id = users[i][USER_ID];
         }
 
+        if (phone == m_clientData.m_phone) {
+            m_clientData.m_id = id;
+        }
+
         UserItem userItem(phone, id);
         userItem.m_isOnline = users[i][ONLINE];
 
@@ -373,11 +378,15 @@ void InstanceMessenger::processReceivedMessage(nlohmann::json &_json) {
     if (payload[SENDER_USER_ID].type() == nlohmann::detail::value_t::string) {
         std::string idStr = payload[SENDER_USER_ID];
         senderUserId = std::atoi(idStr.c_str());
-    } else if (payload[SENDER_USER_ID].type() == nlohmann::detail::value_t::number_integer) {
+    } else {
         senderUserId = payload[SENDER_USER_ID];
     }
 
     DialogItem dialogItem(receivedMsg, senderUserId);
+
+    if (senderUserId == m_clientData.m_id) {
+        return;
+    }
 
     // add new dialog item to local storage
     m_dialogs[senderUserId].append(dialogItem);

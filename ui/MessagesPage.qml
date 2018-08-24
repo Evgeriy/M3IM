@@ -61,7 +61,7 @@ Page {
                     width: rowDialogItem.width / 2 - 25
 
                     Text {
-                        x: model.userId === dialogHeaderLabel.text ? parent.x : listView.width - paintedWidth - 37
+                        x: String(model.userId) !== dialogHeaderLabel.text ? parent.x : listView.width - paintedWidth - 37
                         leftPadding: 10
                         topPadding: 10
 

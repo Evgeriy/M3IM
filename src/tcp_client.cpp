@@ -128,6 +128,7 @@ void TCPClient::onReceived() {
             }
 
             receivedPackageStdString = m_pSocket->read(m_nextBlockSize).toStdString();
+            std::cout << "[Receive] Package: " << receivedPackageStdString << std::endl;
 
             m_nextBlockSize = 0;
             break;

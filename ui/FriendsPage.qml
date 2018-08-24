@@ -106,7 +106,6 @@ Page {
                 onClicked: {
                     client.setActiveDialog(model.userId);
                     console.log(client.getActiveDialog());
-//                    client.sendRequestDialog(model.userId);
                     pageId.sigNextPage();
                 }
             }
