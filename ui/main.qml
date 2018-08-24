@@ -7,6 +7,15 @@ ApplicationWindow {
     height: 480
     title: qsTr("Tabs")
 
+    Rectangle {
+//            border.color: "#1e90ff"
+//            border.width: 1
+        width: parent.width
+        height: parent.height
+        color: "#100000FF"
+    }
+
+
     Connections {
         target: tabAuthorization
         onSigNextPage: {
@@ -45,16 +54,48 @@ ApplicationWindow {
         id: tabBar
         currentIndex: swipeView.currentIndex
 
+        Rectangle {
+            width: parent.width
+            height: parent.height
+            color: "#100000FF"
+        }
+
+
         TabButton {
             text: qsTr("Authorization")
+            Rectangle {
+                border.color: "#1e90ff"
+                border.width: 1
+                width: parent.width
+                height: parent.height
+                color: "#100000FF"
+            }
         }
 
         TabButton {
             text: qsTr("Friends")
+            Rectangle {
+                border.color: "#1e90ff"
+                border.width: 1
+                width: parent.width
+                height: parent.height
+                color: "#100000FF"
+            }
+
+            onClicked: {
+                client.sendRequestContacts()
+            }
         }
 
         TabButton {
             text: qsTr("Messages")
+            Rectangle {
+                border.color: "#1e90ff"
+                border.width: 1
+                width: parent.width
+                height: parent.height
+                color: "#100000FF"
+            }
         }
     }
 }

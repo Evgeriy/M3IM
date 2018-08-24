@@ -10,23 +10,41 @@ Page {
 
     header: Label {
         id: heagerLabel
-        text: client.getAuthStatus() === "ok" ? qsTr("Authorization complete") : qsTr("Registration")
+        height: 60
+
+        RoundButton {
+            background: Rectangle {
+                color: "#100000FF"
+                radius: 0
+                border.width: 1
+                border.color: "#1e90ff"
+            }
+            enabled: false
+            width: parent.width
+            height: parent.height
+            focusPolicy: Qt.NoFocus
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+
+        text: client.getAuthStatus() ? qsTr("Authorization complete") : qsTr("Registration")
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         font.pixelSize: Qt.application.font.pixelSize * 2
+        font.bold: true
         padding: 10
     }
 
     Connections {
         target: client
-//        onAuthStatusChanged: {
-//            heagerLabel.text = client.getAuthStatus() === "ok" ? qsTr("Authorization complete") : qsTr("Registration")
-//            buttonRequestCode.visible = !buttonRequestCode.visible;
-//            console.log(buttonRequestCode.visible);
-//        }
+        onAuthStatusChanged: {
+            heagerLabel.text = client.getAuthStatus() ? qsTr("Authorization complete") : qsTr("Registration")
+            buttonRequestCode.visible = !buttonRequestCode.visible;
+            console.log(buttonRequestCode.visible);
+        }
     }
 
     GridLayout {
+
         id: gridLayoutAuthorizationPage
 
         anchors {
@@ -55,7 +73,7 @@ Page {
 
         TextEdit {
             id: textEditPhone
-            text: client.getAuthStatus() !== "ok" ? "___" : client.getPhone()
+            text: !client.getAuthStatus() ? "___" : client.getPhone()
 
             font.pixelSize: Qt.application.font.pixelSize * 2
 
@@ -69,7 +87,7 @@ Page {
 
         Button {
             id: buttonRequestCode
-            visible: client.getAuthStatus() !== "ok"
+            visible: !client.getAuthStatus()
 
             text: qsTr("Request Code")
             font.pixelSize: Qt.application.font.pixelSize * 2
@@ -89,7 +107,7 @@ Page {
 
         Label {
             id: labelCode
-            visible: client.getAuthStatus() !== "ok"
+            visible: !client.getAuthStatus()
 
             text: qsTr("Code:")
             font.pixelSize: Qt.application.font.pixelSize * 2
@@ -105,7 +123,7 @@ Page {
         TextEdit {
             id: textEditCode
             text: "___"
-            visible: client.getAuthStatus() !== "ok"
+            visible: !client.getAuthStatus()
 
             font.pixelSize: Qt.application.font.pixelSize * 2
 
@@ -119,7 +137,7 @@ Page {
 
         Button {
             id: buttonRegister
-//            visible: client.getAuthStatus() !== "ok"
+            visible: !client.getAuthStatus()
 
             text: qsTr("Register")
             font.pixelSize: Qt.application.font.pixelSize * 2
@@ -134,15 +152,6 @@ Page {
             onClicked: {
                 client.setCode(textEditCode.text);
                 client.sendRequestJWT();
-//                pageId.sigNextPage()
-
-//                if (client.getAuthStatus() === "ok") {
-//                    client.setAuthStatus("bad");
-//                } else {
-//                    client.setAuthStatus("ok");
-//                }
-
-//                console.log("onClicked authStatusChanged")
             }
         }
     }

@@ -14,31 +14,46 @@ TEST(TCPClientTest, SendRequestContacts) {
                        })"_json;
 
     nlohmann::json output = R"({
-                            "result": [
-                                {
-                                    "phone": "79081234567",
-                                    "user_id": "128268"
-                                },
-                                {
-                                    "phone": "79261234567",
-                                    "user_id": "128261"
-                                },
-                                {
-                                    "phone": "79111234567",
-                                    "user_id": "128262"
-                                }
-                            ]
+                            "command": "contacts",
+                            "code": 200,
+                            "description": "ok",
+                            "payload": {
+                                "users": [
+                                    {
+                                        "phone": "79081234567",
+                                        "user_id": "128268"
+                                    },
+                                    {
+                                        "phone": "79261234567",
+                                        "user_id": "128261"
+                                    },
+                                    {
+                                        "phone": "79111234567",
+                                        "user_id": "128262"
+                                    }
+                                ]
+                            }
                         })"_json;
 
     // configure input contacts
-    QMap<QString, UserItem> inputContacts;
-    inputContacts["128268"] = UserItem("79081234567", "128268");
-    inputContacts["128261"] = UserItem("79261234567", "128261");
-    inputContacts["128262"] = UserItem("79111234567", "128262");
+    QMap<int, UserItem> inputContacts;
+    inputContacts[128268] = UserItem("79081234567", 128268);
+    inputContacts[128261] = UserItem("79261234567", 128261);
+    inputContacts[128262] = UserItem("79111234567", 128262);
 
     // configure returned values
-    std::string inputMsgpack   = "0000" + TCPClient::jsonToMsgpack(input);
-    std::string outputMsgpack  = "0000" + TCPClient::jsonToMsgpack(output);
+    std::string inputMsgpack   = TCPClient::jsonToMsgpack(input);
+    std::string outputMsgpack  = TCPClient::jsonToMsgpack(output);
+
+    int length = (int)inputMsgpack.size();
+    QString lengthStr = QString::number(length).rightJustified(4, '0');
+
+    inputMsgpack = lengthStr.toStdString() + inputMsgpack;
+
+    length = (int)outputMsgpack.size();
+    lengthStr = QString::number(length).rightJustified(4, '0');
+
+    outputMsgpack = lengthStr.toStdString() + outputMsgpack;
 
     // mock behaviour settings
     EXPECT_CALL(*mock_server, onReceived(inputMsgpack));
@@ -48,8 +63,8 @@ TEST(TCPClientTest, SendRequestContacts) {
     messenger->sendRequestContacts();
 
     // get output contacts
-    QMap<QString, UserItem> outputContacts = messenger->getContacts();
-    QStringList keys = outputContacts.keys();
+    QMap<int, UserItem> outputContacts = messenger->getContacts();
+    QList<int> keys = outputContacts.keys();
 
     // check results
     for (int i = 0; i < keys.size(); ++i) {

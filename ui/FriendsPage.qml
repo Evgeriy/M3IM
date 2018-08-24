@@ -9,9 +9,25 @@ Page {
 
     header: Label {
         text: qsTr("Contacts")
+
+        RoundButton {
+            background: Rectangle {
+                color: "#100000FF"
+                radius: 0
+                border.width: 1
+                border.color: "#1e90ff"
+            }
+            enabled: false
+            width: parent.width
+            height: parent.height
+            focusPolicy: Qt.NoFocus
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         font.pixelSize: Qt.application.font.pixelSize * 2
+        font.bold: true
         padding: 10
     }
 
@@ -24,6 +40,8 @@ Page {
         anchors.fill: parent
         spacing: 4
         model: contacts
+
+        topMargin: 10
 
         delegate: Item {
             x: 10
@@ -42,9 +60,9 @@ Page {
 
                     RoundButton {
                         background: Rectangle {
-                            color: "blue"
-                            border.color: "#dd0cbcbc"
-                            border.width: 4
+                            color: "#100000FF"
+                            border.color: "#1e90ff"
+                            border.width: 1
                             radius: 100
                         }
                         width: rowFriendItem.height / 1.2
@@ -88,7 +106,7 @@ Page {
                 onClicked: {
                     client.setActiveDialog(model.userId);
                     console.log(client.getActiveDialog());
-                    client.sendRequestDialog(model.userId);
+//                    client.sendRequestDialog(model.userId);
                     pageId.sigNextPage();
                 }
             }

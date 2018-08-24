@@ -14,7 +14,8 @@ set(SOURCE_LIB mock_tcp_server.hpp
                unit_send_request_jwt.hpp
                unit_send_request_presence.hpp
                unit_send_request_contacts.hpp
-               unit_send_request_dialog.hpp)
+               unit_send_request_dialog.hpp
+               unit_send_request_message.hpp)
 
 add_library(unit_tests STATIC ${SOURCE_LIB})
 

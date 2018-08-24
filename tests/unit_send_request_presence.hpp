@@ -10,7 +10,7 @@ TEST(TCPClientTest, SendPresence) {
     client->setMockTCPServer(mock_server);
 
     QString jwt = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9...";
-    QString auth_status = "ok";
+    bool auth_status = true;
 
     messenger->setJWT(jwt);
 
@@ -21,11 +21,21 @@ TEST(TCPClientTest, SendPresence) {
                            }
                        })"_json;
 
-    nlohmann::json output = R"({"result": "ok"})"_json;
+    nlohmann::json output = R"({"command": "presence", "code": 200, "description": "ok"})"_json;
 
     // configure returned values
-    std::string inputMsgpack   = "0000" + TCPClient::jsonToMsgpack(input);
-    std::string outputMsgpack  = "0000" + TCPClient::jsonToMsgpack(output);
+    std::string inputMsgpack   = TCPClient::jsonToMsgpack(input);
+    std::string outputMsgpack  = TCPClient::jsonToMsgpack(output);
+
+    int length = (int)inputMsgpack.size();
+    QString lengthStr = QString::number(length).rightJustified(4, '0');
+
+    inputMsgpack = lengthStr.toStdString() + inputMsgpack;
+
+    length = (int)outputMsgpack.size();
+    lengthStr = QString::number(length).rightJustified(4, '0');
+
+    outputMsgpack = lengthStr.toStdString() + outputMsgpack;
 
     // mock behaviour settings
     EXPECT_CALL(*mock_server, onReceived(inputMsgpack));
@@ -35,8 +45,8 @@ TEST(TCPClientTest, SendPresence) {
     messenger->sendRequestPresence();
 
     std::cout << std::endl << std::endl;
-    std::cout << "[ACTUAL   TEMP TOKEN] " << messenger->getAuthStatus().toStdString() << std::endl;
-    std::cout << "[EXPECTED TEMP TOKEN] " << auth_status.toStdString() << std::endl;
+    std::cout << "[ACTUAL   TEMP TOKEN] " << messenger->getAuthStatus() << std::endl;
+    std::cout << "[EXPECTED TEMP TOKEN] " << auth_status << std::endl;
 
     // check results
     EXPECT_EQ(messenger->getAuthStatus(), auth_status);

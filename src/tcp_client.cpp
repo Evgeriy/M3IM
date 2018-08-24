@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QTcpSocket>
 #include <QHostAddress>
+#include <QDataStream>
 
 // CPP/STL
 #include <cstdio>
@@ -41,19 +42,23 @@ void TCPClient::connectToHost(const QString &_hostAddressString, const quint16 &
 
 void TCPClient::send(const nlohmann::json &_sendedPackage) {
     // pack to binary
-    std::string packed = "0000" + jsonToMsgpack(_sendedPackage);
+    std::string jsonMsgpack = jsonToMsgpack(_sendedPackage);
+
+    int length = (int)jsonMsgpack.size();
+    QString lengthStr = QString::number(length).rightJustified(4, '0');
+
+    jsonMsgpack = lengthStr.toStdString() + jsonMsgpack;
 
     if (m_pMockTCPServer != nullptr) {
         // send to mock server and receive
-        m_pMockTCPServer->onReceived(packed);
+        m_pMockTCPServer->onReceived(jsonMsgpack);
         onReceived();
     } else {
+        // send to server
         // print debug
         std::cout << "[Send] Json package: " << _sendedPackage << std::endl;
-        std::cout << "[Send] Msgpack package: " << packed << std::endl;
-
-        // send to server
-        m_pSocket->write(packed.c_str(), packed.size());
+        std::cout << "[Send] Msgpack package: " << jsonMsgpack << std::endl;
+        m_pSocket->write(jsonMsgpack.c_str(), jsonMsgpack.size());
     }
 }
 
@@ -68,16 +73,43 @@ void TCPClient::onReceived() {
     if (m_pMockTCPServer != nullptr) {
         // use send() of mock server
         receivedPackageStdString = m_pMockTCPServer->send();
+        std::cout << "[Receive] Package: " << receivedPackageStdString << std::endl;
+
+        m_nextBlockSize = static_cast<quint16>(std::atoi(receivedPackageStdString.substr(0, 4).c_str()));
+        // print debug
+        std::cout << "[Receive] Package size: " << m_nextBlockSize << std::endl;
+
+        receivedPackageStdString = receivedPackageStdString.substr(4, receivedPackageStdString.length() - 4);
+
+        if (m_nextBlockSize == receivedPackageStdString.length()) {
+            // print debug
+            std::cout << "[Receive] Good package!" << std::endl;
+        }
     } else {
-        // read all from socket
-        receivedPackageStdString = m_pSocket->readAll().toStdString();
+        // read from socket
+        while (true) {
+            if (!m_nextBlockSize) {
+                if (m_pSocket->bytesAvailable() < sizeof(qint16)) {
+                    break;
+                }
+                char sizePart[4];
+                m_pSocket->read(sizePart, 4);
+                m_nextBlockSize = static_cast<quint16>(std::atoi(sizePart));
+
+                // print debug
+                std::cout << "[Receive] Package size: " << m_nextBlockSize << std::endl;
+            }
+
+            if (m_pSocket->bytesAvailable() < m_nextBlockSize) {
+                break;
+            }
+
+            receivedPackageStdString = m_pSocket->read(m_nextBlockSize).toStdString();
+
+            m_nextBlockSize = 0;
+            break;
+        }
     }
-
-    // print debug
-    std::cout << "[Receive] Raw package: " << receivedPackageStdString << std::endl;
-
-    // remove "0000"
-    receivedPackageStdString = receivedPackageStdString.substr(4, receivedPackageStdString.size() - 4);
 
     // print debug
     std::cout << "[Receive] Msgpack package: " << receivedPackageStdString << std::endl;

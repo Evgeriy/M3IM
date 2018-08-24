@@ -46,6 +46,7 @@ public:
 private:
     QTcpSocket  *m_pSocket{nullptr};
     AbstractTCPServer *m_pMockTCPServer{nullptr};
+    quint16 m_nextBlockSize{0};
 };
 
 

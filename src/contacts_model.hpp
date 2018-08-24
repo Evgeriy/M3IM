@@ -58,7 +58,7 @@ public:
             item.m_phone = value.toString();
             break;
         case UserId:
-            item.m_id = value.toString();
+            item.m_id = value.toInt();
             break;
         default:
             return false;

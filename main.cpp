@@ -8,11 +8,12 @@
 
 // TEST BUILD SETTINGS
 #define TEST_MODE             0
-#define TEST_REQUEST_CODE     0
-#define TEST_REQUEST_JWT      0
-#define TEST_REQUEST_PRESENCE 0
+#define TEST_REQUEST_CODE     1
+#define TEST_REQUEST_JWT      1
+#define TEST_REQUEST_PRESENCE 1
 #define TEST_REQUEST_CONTACTS 1
 #define TEST_REQUEST_DIALOG   0
+#define TEST_REQUEST_MESSAGE  1
 
 #if TEST_MODE
     #if TEST_REQUEST_CODE
@@ -29,6 +30,9 @@
     #endif
     #if TEST_REQUEST_DIALOG
         #include "unit_send_request_dialog.hpp"
+    #endif
+    #if TEST_REQUEST_MESSAGE
+        #include "unit_send_request_message.hpp"
     #endif
 #endif
 
@@ -59,11 +63,24 @@ int main(int argc, char *argv[]) {
 #elif CONSOLE_MODE
     QCoreApplication app(argc, argv);
 
-    TCPClient *client = new TCPClient();
-    InstanceMessenger *messenger = new InstanceMessenger(client);
-    messenger->setJWT("eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9...");
-    messenger->writeJWTToFile();
-    messenger->sendRequestCode();
+//    TCPClient *client = new TCPClient();
+//    InstanceMessenger *messenger = new InstanceMessenger(client);
+//    messenger->setJWT("eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9...");
+//    messenger->writeJWTToFile();
+//    messenger->sendRequestCode();
+
+//    nlohmann::json tempJson = R"({"command" => "hello", "code" => 200, "description" => "ok", "payload" => {"message" => "world"}})"_json;
+
+//    std::cout << tempJson["command"] << std::endl;
+
+//    int t = 9;
+//    char s[4];
+//    sprintf(s, "%04d", t);
+
+
+//    std::string ss(s);
+//    int tt = std::atoi(ss.c_str());
+//    std::cout << ss << " " << tt << std::endl;
 
 #elif QML_MODE
     // create gui app
@@ -78,7 +95,7 @@ int main(int argc, char *argv[]) {
 
     // create tcp client and connection
     TCPClient *client = new TCPClient();
-    //client->connectToHost("192.168.0.108", 6000);
+    client->connectToHost("192.168.8.107", 6000);
 
     // create messenger obj
     InstanceMessenger *messenger = new InstanceMessenger(client);

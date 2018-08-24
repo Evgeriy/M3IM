@@ -8,9 +8,25 @@ Page {
 
     header: Label {
         id: dialogHeaderLabel
+
+        RoundButton {
+            background: Rectangle {
+                color: "#100000FF"
+                radius: 0
+                border.width: 1
+                border.color: "#1e90ff"
+            }
+            enabled: false
+            width: parent.width
+            height: parent.height
+            focusPolicy: Qt.NoFocus
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         font.pixelSize: Qt.application.font.pixelSize * 2
+        font.bold: true
         padding: 10
         text: ""
     }
@@ -21,6 +37,7 @@ Page {
 
     ListView {
         id: listView
+        topMargin: 10
         anchors.rightMargin: 0
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 64
@@ -61,7 +78,7 @@ Page {
 
                         Rectangle {
                             border.color: model.userId === dialogHeaderLabel.text ? "#1e90ff" : "lightgray"
-                            border.width: 3
+                            border.width: 1
                             radius: 15
                             width: parent.contentWidth + 20
                             height: parent.contentHeight + 20
@@ -89,12 +106,12 @@ Page {
 
         Rectangle {
             x: 10
-            border.color: "lightgray"
-            border.width: 3
+            border.color: "#1e90ff"
+            border.width: 1
             radius: 15
             width: parent.width - 5
             height: parent.height
-            color: "transparent"
+            color: "#100000FF"
         }
 
         Keys.onEnterPressed: {
@@ -122,12 +139,12 @@ Page {
         radius: 15
 
         Rectangle {
-            border.color: "lightgray"
-            border.width: 3
+            border.color: "#1e90ff"
+            border.width: 1
             radius: 15
             width: parent.width
             height: parent.height
-            color: "transparent"
+            color: "#100000FF"
         }
 
         onClicked: {
@@ -135,11 +152,4 @@ Page {
             textMessage.clear();
         }
     }
-
-
 }
-
-/*##^## Designer {
-    D{i:2;anchors_height:153}
-}
- ##^##*/

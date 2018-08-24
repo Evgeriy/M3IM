@@ -71,7 +71,7 @@ public:
             item.m_message = value.toString();
             break;
         case UserId:
-            item.m_user_id = value.toString();
+            item.m_user_id = value.toInt();
             break;
         default:
             return false;

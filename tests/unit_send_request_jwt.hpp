@@ -27,11 +27,28 @@ TEST(TCPClientTest, SendRequestJWT) {
             }
         })"_json;
 
-    nlohmann::json output = R"({"result": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9..."})"_json;
+    nlohmann::json output = R"({
+            "command": "request_jwt",
+            "code": 200,
+            "description": "ok",
+            "payload": {
+                "jwt": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9..."
+            }
+        })"_json;
 
-    // configure returned values
-    std::string inputMsgpack   = "0000" + TCPClient::jsonToMsgpack(input);
-    std::string outputMsgpack  = "0000" + TCPClient::jsonToMsgpack(output);
+//    // configure returned values
+    std::string inputMsgpack   = TCPClient::jsonToMsgpack(input);
+    std::string outputMsgpack  = TCPClient::jsonToMsgpack(output);
+
+    int length = (int)inputMsgpack.size();
+    QString lengthStr = QString::number(length).rightJustified(4, '0');
+
+    inputMsgpack = lengthStr.toStdString() + inputMsgpack;
+
+    length = (int)outputMsgpack.size();
+    lengthStr = QString::number(length).rightJustified(4, '0');
+
+    outputMsgpack = lengthStr.toStdString() + outputMsgpack;
 
     // mock behaviour settings
     EXPECT_CALL(*mock_server, onReceived(inputMsgpack));
