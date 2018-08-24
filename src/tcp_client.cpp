@@ -22,6 +22,12 @@ TCPClient::TCPClient(QObject *_parent) :
     QObject(_parent),
     m_pSocket(nullptr) {
 
+    m_pSocket = new QTcpSocket();
+
+    // connect signals and slots
+    connect(m_pSocket, &QTcpSocket::connected, this, &TCPClient::onConnected);
+    connect(m_pSocket, &QTcpSocket::readyRead, this, &TCPClient::onReceived);
+    connect(m_pSocket, &QTcpSocket::stateChanged, this, &TCPClient::statusChanged);
 }
 
 TCPClient::~TCPClient() {
@@ -29,15 +35,32 @@ TCPClient::~TCPClient() {
     delete m_pMockTCPServer;
 }
 
-void TCPClient::connectToHost(const QString &_hostAddressString, const quint16 &_port) {
-    // make connection
-    m_pSocket = new QTcpSocket(this);
-    m_pSocket->connectToHost(_hostAddressString, _port);
+void TCPClient::reconnect() {
+    if (m_pSocket != nullptr) {
+        delete m_pSocket;
+    }
 
-    // connect signals and slots
+    m_pSocket = new QTcpSocket();
     connect(m_pSocket, &QTcpSocket::connected, this, &TCPClient::onConnected);
-    connect(m_pSocket, &QTcpSocket::disconnected, this, &TCPClient::closed);
     connect(m_pSocket, &QTcpSocket::readyRead, this, &TCPClient::onReceived);
+    connect(m_pSocket, &QTcpSocket::stateChanged, this, &TCPClient::statusChanged);
+
+    m_pSocket->connectToHost(m_hostAddress, m_port);
+}
+
+void TCPClient::disconnect() {
+    m_pSocket->disconnect();
+    m_pSocket->close();
+
+    emit statusChanged(m_pSocket->state());
+}
+
+void TCPClient::connectToHost(const QString &_hostAddressString, const quint16 &_port) {
+    m_hostAddress = _hostAddressString;
+    m_port = _port;
+
+    // make connection
+    m_pSocket->connectToHost(m_hostAddress, m_port);
 }
 
 void TCPClient::send(const nlohmann::json &_sendedPackage) {

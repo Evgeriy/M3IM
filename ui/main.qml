@@ -46,7 +46,10 @@ ApplicationWindow {
 
         MessagesPage {
             id: tabMessages
+        }
 
+        Settings {
+            id: tabSettings
         }
     }
 
@@ -89,6 +92,17 @@ ApplicationWindow {
 
         TabButton {
             text: qsTr("Messages")
+            Rectangle {
+                border.color: "#1e90ff"
+                border.width: 1
+                width: parent.width
+                height: parent.height
+                color: "#100000FF"
+            }
+        }
+
+        TabButton {
+            text: qsTr("Settings")
             Rectangle {
                 border.color: "#1e90ff"
                 border.width: 1

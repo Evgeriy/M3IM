@@ -85,7 +85,14 @@ Page {
             Layout.column: 2
         }
 
-        Button {
+        RoundButton {
+            background: Rectangle {
+                color: "#100000FF"
+                radius: 15
+                border.width: 1
+                border.color: "#1e90ff"
+            }
+
             id: buttonRequestCode
             visible: !client.getAuthStatus()
 
@@ -135,7 +142,14 @@ Page {
             Layout.column: 2
         }
 
-        Button {
+        RoundButton {
+            background: Rectangle {
+                color: "#100000FF"
+                radius: 15
+                border.width: 1
+                border.color: "#1e90ff"
+            }
+
             id: buttonRegister
             visible: !client.getAuthStatus()
 

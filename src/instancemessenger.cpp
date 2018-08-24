@@ -18,6 +18,8 @@ InstanceMessenger::InstanceMessenger(TCPClient *_tcpClient, QObject *_parent) :
 
     readJWTFromFile();
     connect(m_pTCPClient, &TCPClient::received, this, &InstanceMessenger::onReceived);
+    connect(m_pTCPClient, &TCPClient::statusChanged, this, &InstanceMessenger::onSocketStateChanged);
+
 
     m_pContactsModel = new ContactsModel();
     m_pDialogModel = new DialogModel();
@@ -61,6 +63,18 @@ void InstanceMessenger::sendHello() {
 
     // send json
     m_pTCPClient->send(jsonPhoneNumber);
+}
+
+void InstanceMessenger::reconnect() {
+    if (m_pTCPClient != nullptr) {
+        m_pTCPClient->reconnect();
+    }
+}
+
+void InstanceMessenger::disconnect() {
+    if (m_pTCPClient != nullptr) {
+        m_pTCPClient->disconnect();
+    }
 }
 
 void InstanceMessenger::sendRequestCode() {
@@ -183,6 +197,34 @@ void InstanceMessenger::sendMessage(const QString &_message, const int &_userId)
     m_pTCPClient->send(resultPackage);
 }
 
+void InstanceMessenger::onSocketStateChanged(QAbstractSocket::SocketState _socketState) {
+    switch(_socketState) {
+    case QAbstractSocket::UnconnectedState:
+        m_socketState = "UnconnectedState";
+        break;
+    case QAbstractSocket::HostLookupState:
+        m_socketState = "HostLookupState";
+        break;
+    case QAbstractSocket::ConnectingState:
+        m_socketState = "ConnectingState";
+        break;
+    case QAbstractSocket::ConnectedState:
+        m_socketState = "ConnectedState";
+        break;
+    case QAbstractSocket::BoundState:
+        m_socketState = "BoundState";
+        break;
+    case QAbstractSocket::ClosingState:
+        m_socketState = "ClosingState";
+        break;
+    case QAbstractSocket::ListeningState:
+        m_socketState = "ListeningState";
+        break;
+    }
+
+    emit socketStatusChanged();
+}
+
 std::string InstanceMessenger::getCommand(const nlohmann::json &_json) const {
     return _json[COMMAND];
 }
@@ -243,8 +285,6 @@ void InstanceMessenger::onReceived(nlohmann::json _receivedPackage) {
         std::cout << "[InstanceMessenger::onReceived] " << "Undefined response code!" << std::endl;
         break;
     }
-
-    processResponseToContacts(_receivedPackage);
 }
 
 void InstanceMessenger::processResponseToRequestHello(nlohmann::json _json) {

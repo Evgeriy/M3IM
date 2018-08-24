@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QMap>
 #include <QDateTime>
+#include <QAbstractSocket>
 
 // FORWARD DECLARATIONS
 QT_FORWARD_DECLARE_CLASS(TCPClient)
@@ -60,6 +61,7 @@ public:
 class InstanceMessenger : public QObject {
     Q_OBJECT
     Q_PROPERTY(bool authStatus READ getAuthStatus WRITE setAuthStatus NOTIFY authStatusChanged)
+    Q_PROPERTY(QString authStatus READ getSocketStatus NOTIFY socketStatusChanged)
 
 public:
     explicit InstanceMessenger(TCPClient *_tcpClient, QObject *_parent = nullptr);
@@ -67,6 +69,11 @@ public:
 
 signals:
     Q_INVOKABLE void authStatusChanged();
+    Q_INVOKABLE void socketStatusChanged();
+
+public:
+    Q_INVOKABLE void reconnect();
+    Q_INVOKABLE void disconnect();
 
 public:
     Q_INVOKABLE void sendHello();
@@ -79,6 +86,7 @@ public:
 
 public:
     Q_INVOKABLE QString getCode() const { return m_code; }
+    Q_INVOKABLE QString getSocketStatus() const { return m_socketState; }
     Q_INVOKABLE QString getTempToken() const { return m_tempToken; }
     Q_INVOKABLE QString getJWT() const { return m_jwt; }
     Q_INVOKABLE bool getAuthStatus() const { return m_authStatus; }
@@ -100,6 +108,7 @@ public:
     Q_INVOKABLE void setActiveDialog(const QString &_dialog) { m_activeDialog = _dialog; }
 
 public slots:
+    void onSocketStateChanged(QAbstractSocket::SocketState _socketState);
     void onReceived(nlohmann::json _receivedPackage);
 
     std::string getCommand(const nlohmann::json &_json) const;
@@ -123,6 +132,7 @@ public:
 
 private:
     TCPClient *m_pTCPClient{nullptr};   // socket
+    QString m_socketState;
     QString m_code;                     // sms code (should received from server with code request)
     QString m_tempToken;                // temp token (should received from server with code request)
     QString m_jwt;                      // jwt token (should received from server with jwt request)
@@ -142,6 +152,8 @@ public:
 
     std::string m_worldStdString{""};
     QString m_jwtPath{"token.jwt"};
+
+
 
 public:
     static nlohmann::json getJsonFromString(const QString &_strName, const QString &_str);

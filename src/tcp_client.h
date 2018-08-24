@@ -3,6 +3,7 @@
 
 // QT
 #include <QObject>
+#include <QAbstractSocket>
 
 // FORWARD DECLARATIONS
 QT_FORWARD_DECLARE_CLASS(QTcpSocket)
@@ -28,9 +29,14 @@ public:
     explicit TCPClient(QObject *_parent = nullptr);
     virtual ~TCPClient();
 
+public:
+    void reconnect();
+    void disconnect();
+
 signals:
     void closed();
     void received(nlohmann::json);
+    void statusChanged(QAbstractSocket::SocketState);
 
 public:
     void connectToHost(const QString &_hostAddressString, const quint16 &_port);
@@ -44,6 +50,9 @@ public:
     static std::string jsonToMsgpack(const nlohmann::json &_json);
 
 private:
+    QString m_hostAddress{""};
+    quint16 m_port{0};
+
     QTcpSocket  *m_pSocket{nullptr};
     AbstractTCPServer *m_pMockTCPServer{nullptr};
     quint16 m_nextBlockSize{0};
