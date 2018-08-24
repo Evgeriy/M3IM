@@ -61,7 +61,7 @@ Page {
                     width: rowDialogItem.width / 2 - 25
 
                     Text {
-                        x: String(model.userId) !== dialogHeaderLabel.text ? parent.x : listView.width - paintedWidth - 37
+                        x: String(model.userId) === dialogHeaderLabel.text ? parent.x : listView.width - paintedWidth - 37
                         leftPadding: 10
                         topPadding: 10
 
@@ -77,7 +77,7 @@ Page {
                         font.bold: false
 
                         Rectangle {
-                            border.color: model.userId === dialogHeaderLabel.text ? "#1e90ff" : "lightgray"
+                            border.color: String(model.userId) === dialogHeaderLabel.text ? "#1e90ff" : "lightgray"
                             border.width: 1
                             radius: 15
                             width: parent.contentWidth + 20
