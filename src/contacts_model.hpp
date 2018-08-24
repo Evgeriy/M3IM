@@ -33,6 +33,20 @@ public:
         };
     }
 
+    void setContacts(const QMap<int, UserItem> &_dialog) {
+        beginResetModel();
+        m_contacts.clear();
+        endResetModel();
+
+        QList<int> keys = _dialog.keys();
+
+        for (int i = 0; i < keys.size(); ++i) {
+            beginInsertRows(QModelIndex(), m_contacts.size(), m_contacts.size());
+            m_contacts.append(_dialog[keys[i]]);
+            endInsertRows();
+        }
+    }
+
     void addContact(const UserItem &_userItem) {
         if (!m_contacts.contains(_userItem)) {
             beginInsertRows(QModelIndex(), m_contacts.size(), m_contacts.size());

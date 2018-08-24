@@ -358,10 +358,10 @@ void InstanceMessenger::processResponseToContacts(nlohmann::json &_json) {
         if (!m_contacts.contains(id)) {
             m_contacts[id] = userItem;
         }
-
-        // change model
-        m_pContactsModel->addContact(userItem);
     }
+
+    // change model
+    m_pContactsModel->setContacts(m_contacts);
 }
 
 void InstanceMessenger::processResponseToDialog(nlohmann::json &_json) {
