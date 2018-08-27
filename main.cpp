@@ -95,7 +95,7 @@ int main(int argc, char *argv[]) {
 
     // create tcp client and connection
     TCPClient *client = new TCPClient();
-    client->connectToHost("192.168.8.107", 6000);
+    client->connectToHost("192.168.0.113", 6000);
 
     // create messenger obj
     InstanceMessenger *messenger = new InstanceMessenger(client);

@@ -5,11 +5,13 @@ ApplicationWindow {
     visible: true
     width: 640
     height: 480
-    title: qsTr("Tabs")
+
+    minimumWidth: 640
+    minimumHeight: 480
+
+    title: qsTr("Instance Messenger")
 
     Rectangle {
-//            border.color: "#1e90ff"
-//            border.width: 1
         width: parent.width
         height: parent.height
         color: "#100000FF"
@@ -60,29 +62,27 @@ ApplicationWindow {
         Rectangle {
             width: parent.width
             height: parent.height
-            color: "#100000FF"
+            color: "#87cefa"
         }
 
 
         TabButton {
+            font.pixelSize: Qt.application.font.pixelSize * 1.5
             text: qsTr("Authorization")
             Rectangle {
-                border.color: "#1e90ff"
-                border.width: 1
                 width: parent.width
                 height: parent.height
-                color: "#100000FF"
+                color: "#87cefa"
             }
         }
 
         TabButton {
+            font.pixelSize: Qt.application.font.pixelSize * 1.5
             text: qsTr("Friends")
             Rectangle {
-                border.color: "#1e90ff"
-                border.width: 1
                 width: parent.width
                 height: parent.height
-                color: "#100000FF"
+                color: "#87cefa"
             }
 
             onClicked: {
@@ -91,24 +91,22 @@ ApplicationWindow {
         }
 
         TabButton {
+            font.pixelSize: Qt.application.font.pixelSize * 1.5
             text: qsTr("Messages")
             Rectangle {
-                border.color: "#1e90ff"
-                border.width: 1
                 width: parent.width
                 height: parent.height
-                color: "#100000FF"
+                color: "#87cefa"
             }
         }
 
         TabButton {
+            font.pixelSize: Qt.application.font.pixelSize * 1.5
             text: qsTr("Settings")
             Rectangle {
-                border.color: "#1e90ff"
-                border.width: 1
                 width: parent.width
                 height: parent.height
-                color: "#100000FF"
+                color: "#87cefa"
             }
         }
     }

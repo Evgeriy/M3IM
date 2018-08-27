@@ -8,39 +8,39 @@ Page {
 
     header: Label {
         id: dialogHeaderLabel
+        height: 60
 
         RoundButton {
+            id:dialogHeaderLabelButton
             background: Rectangle {
-                color: "#100000FF"
+                color: "#87cefa"
                 radius: 0
-                border.width: 1
-                border.color: "#1e90ff"
             }
-            enabled: false
             width: parent.width
             height: parent.height
             focusPolicy: Qt.NoFocus
             anchors.horizontalCenter: parent.horizontalCenter
+
+            font.pixelSize: Qt.application.font.pixelSize * 2
+            text: ""
         }
 
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
-        font.pixelSize: Qt.application.font.pixelSize * 2
-        font.bold: true
         padding: 10
-        text: ""
     }
 
     function setHeader(msg) {
-        dialogHeaderLabel.text = msg;
+        dialogHeaderLabelButton.text = msg;
     }
 
     ListView {
         id: listView
+        anchors.bottom: textMessage.top
+        anchors.bottomMargin: 30
         topMargin: 10
+        bottomMargin: 10
         anchors.rightMargin: 0
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 64
         anchors.right: parent.right
         anchors.left: parent.left
         anchors.top: parent.top
@@ -97,9 +97,9 @@ Page {
 
         id: textMessage
         anchors.left: listView.left
-        anchors.top: listView.bottom
         anchors.bottom: parent.bottom
         width: parent.width - 90
+        height: 70
         wrapMode: Text.Wrap
         text: qsTr("Text")
         font.pixelSize: 14
@@ -129,11 +129,11 @@ Page {
         id: buttonSend
         anchors.left: textMessage.right
         anchors.leftMargin: 15
-        anchors.top: listView.bottom
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 15
 
         width: 70
+        height: 70
         text: qsTr("Send")
         font.pixelSize: 14
         radius: 15
@@ -150,6 +150,7 @@ Page {
         onClicked: {
             client.sendMessage(textMessage.text, dialogHeaderLabel.text)
             textMessage.clear();
+            listView.positionViewAtEnd();
         }
     }
 }

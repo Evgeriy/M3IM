@@ -8,26 +8,24 @@ Page {
     signal sigNextPage()
 
     header: Label {
-        text: qsTr("Contacts")
+        height: 60
 
         RoundButton {
             background: Rectangle {
-                color: "#100000FF"
+                color: "#87cefa"
                 radius: 0
-                border.width: 1
-                border.color: "#1e90ff"
             }
-            enabled: false
             width: parent.width
             height: parent.height
             focusPolicy: Qt.NoFocus
             anchors.horizontalCenter: parent.horizontalCenter
+
+            font.pixelSize: Qt.application.font.pixelSize * 2
+            text: qsTr("Contacts")
         }
 
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
-        font.pixelSize: Qt.application.font.pixelSize * 2
-        font.bold: true
         padding: 10
     }
 
@@ -38,41 +36,46 @@ Page {
     ListView {
         id: listView
         anchors.fill: parent
-        spacing: 4
+        spacing: 7
         model: contacts
 
         topMargin: 10
+        bottomMargin: 10
+
+
 
         delegate: Item {
             x: 10
             width: parent.width
-            height: 80
+            height: 75
+
+
 
             Row {
                 id: rowFriendItem
                 width: parent.width
-                height: parent.height
-                spacing: 10
+                height: 80
+                spacing: 5
 
                 Column {
                     id: columnAvatar
-                    width: rowFriendItem.height / 1.2
+                    width: 75
 
                     RoundButton {
                         background: Rectangle {
-                            color: model.online ? "#90ee90" : "#100000FF"
+                            color: model.isOnline ? model.unread ? "#87cefa": "#90ee90" : "#100000FF"
                             border.color: "#1e90ff"
                             border.width: 1
                             radius: 100
                         }
-                        width: rowFriendItem.height / 1.2
-                        height: rowFriendItem.height / 1.2
+                        width: 75
+                        height: 75
                     }
                 }
 
                 Column {
                     id: columnFriendInfo
-                    width: rowFriendItem.width - (columnAvatar.width) - spacing * 3;
+                    width: rowFriendItem.width - (columnAvatar.width + columnStatus.width) - spacing * 3;
 
                     Text {
                         id: textContactId
@@ -92,23 +95,66 @@ Page {
 
                     Text {
                         id: textLastMessage
-                        text: "Last message"
+                        text: getLastMessage(model.lastMessage)
                         font.family: "Tahoma"
                         font.pixelSize: 15
+                        color: "gray"
                     }
 
                     spacing: 5
                 }
+
+                Column {
+                    id: columnStatus
+                    width: 45
+                    y: parent.y + 20
+
+                    RoundButton {
+                        background: Rectangle {
+                            color: "#87cefa"
+                            radius: 100
+                        }
+
+                        text: String(model.unread)
+                        font.family: "Tahoma"
+                        font.pixelSize: 12
+                        font.bold: true
+
+                        width: model.unread ? 30 : 0
+                        height: model.unread ? 30 : 0
+                    }
+                }
+            }
+
+            Text {
+                id: separator
+                width: parent.width
+                anchors.bottom: parent.bottom
+                anchors.left: parent.left
+                anchors.leftMargin: 80
+                anchors.bottomMargin: -6
+                color: "lightgray"
+                text: "_".repeat(separator.width)
             }
 
             MouseArea {
                 anchors.fill: rowFriendItem
                 onClicked: {
                     client.setActiveDialog(model.userId);
-                    console.log(client.getActiveDialog());
+                    model.unread = 0;
                     pageId.sigNextPage();
                 }
             }
         }
+    }
+
+    function getLastMessage(msg) {
+        var retValue = "";
+        if (msg.length > 20) {
+            retValue = msg.substring(0, 17) + "...";
+        } else {
+            retValue = msg;
+        }
+        return retValue;
     }
 }

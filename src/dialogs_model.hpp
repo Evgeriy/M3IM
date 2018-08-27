@@ -53,6 +53,8 @@ public:
             QModelIndex index = createIndex(0, 0);
             emit dataChanged(index, index);
         }
+
+
     }
 
     int rowCount(const QModelIndex & parent = QModelIndex()) const override {

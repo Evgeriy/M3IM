@@ -14,23 +14,20 @@ Page {
 
         RoundButton {
             background: Rectangle {
-                color: "#100000FF"
+                color: "#87cefa"
                 radius: 0
-                border.width: 1
-                border.color: "#1e90ff"
             }
-            enabled: false
             width: parent.width
             height: parent.height
             focusPolicy: Qt.NoFocus
             anchors.horizontalCenter: parent.horizontalCenter
+
+            font.pixelSize: Qt.application.font.pixelSize * 2
+            text: client.getAuthStatus() ? qsTr("Authorization complete") : qsTr("Registration")
         }
 
-        text: client.getAuthStatus() ? qsTr("Authorization complete") : qsTr("Registration")
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
-        font.pixelSize: Qt.application.font.pixelSize * 2
-        font.bold: true
         padding: 10
     }
 

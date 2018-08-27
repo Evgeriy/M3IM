@@ -25,6 +25,8 @@ InstanceMessenger::InstanceMessenger(TCPClient *_tcpClient, QObject *_parent) :
     m_pContactsModel = new ContactsModel();
     m_pDialogModel = new DialogModel();
 
+    connect(m_pContactsModel, &ContactsModel::userItemChanged, this, &InstanceMessenger::onUserItemChanged);
+
 //    m_clientData.m_id = "111";
 
 //    UserItem first("First", "123");
@@ -47,8 +49,6 @@ InstanceMessenger::InstanceMessenger(TCPClient *_tcpClient, QObject *_parent) :
 
 //    m_dialogs["222"].append(fDialog2);
 //    m_dialogs["222"].append(sDialog2);
-
-
 }
 
 InstanceMessenger::~InstanceMessenger() {
@@ -248,6 +248,10 @@ int InstanceMessenger::getCode(const nlohmann::json &_json) const {
 
 }
 
+void InstanceMessenger::onUserItemChanged(int _id, UserItem _userItem) {
+    m_contacts[_id] = _userItem;
+}
+
 void InstanceMessenger::onReceived(nlohmann::json _receivedPackage) {
     if (getCode(_receivedPackage) == -1) {
         std::cout << "[InstanceMessenger::onReceived] " << "Server message!" << std::endl;
@@ -375,29 +379,41 @@ void InstanceMessenger::processResponseToSendMessage(nlohmann::json &_json) {
 void InstanceMessenger::processReceivedMessage(nlohmann::json &_json) {
     std::cout << "[InstanceMessenger::processReceivedMessage] " << "Json: " << _json << std::endl;
 
+    // parse payload part
     nlohmann::json payload = _json[PAYLOAD];
 
-    QString receivedMsg = QString::fromStdString(payload[MESSAGE]);
+    // parse message
+    QString msg = QString::fromStdString(payload[MESSAGE]);
 
-    int senderUserId = 0;
+    // parse user id
+    int userId = 0;
     if (payload[SENDER_USER_ID].type() == nlohmann::detail::value_t::string) {
         std::string idStr = payload[SENDER_USER_ID];
-        senderUserId = std::atoi(idStr.c_str());
+        userId = std::atoi(idStr.c_str());
     } else {
-        senderUserId = payload[SENDER_USER_ID];
+        userId = payload[SENDER_USER_ID];
     }
 
-    DialogItem dialogItem(receivedMsg, senderUserId);
+    if (userId) {
+        DialogItem dialogItem(msg, userId);
 
-    if (m_contacts.contains(senderUserId) && m_clientData.m_phone == m_contacts[senderUserId].m_phone) {
-        return;
+//        if (m_contacts.contains(userId)) {
+//            return;
+//        }
+
+        // add new dialog item to local storage
+        m_dialogs[userId].append(dialogItem);
+
+        // change dialog model
+        m_pDialogModel->addDialogItem(dialogItem);
+
+        // change user model
+        m_contacts[userId].m_lastMessage = msg;
+        m_contacts[userId].m_unreadCount++;
+
+        m_pContactsModel->setContacts(m_contacts);
+        m_pContactsModel->sort(0);
     }
-
-    // add new dialog item to local storage
-    m_dialogs[senderUserId].append(dialogItem);
-
-    // Change model
-    m_pDialogModel->addDialogItem(dialogItem);
 }
 
 void InstanceMessenger::readJWTFromFile() {

@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QDebug>
 #include <QAbstractListModel>
+#include <QtAlgorithms>
 
 // CPP/STL
 #include <cstdio>
@@ -21,18 +22,24 @@ public:
     enum ContactsRoles {
         Phone = Qt::UserRole + 1,
         UserId,
-        Online
+        IsOnline,
+        LastMessage,
+        Unread
     };
-
-//    using QAbstractListModel::QAbstractListModel;
 
     QHash<int,QByteArray> roleNames() const override {
         return { { Phone, "phone" },
                  { UserId, "userId" },
-                 { Online, "online" }
+                 { IsOnline, "isOnline" },
+                 { LastMessage, "lastMessage" },
+                 { Unread, "unread" }
         };
     }
 
+signals:
+    void userItemChanged(int, UserItem);
+
+public:
     void setContacts(const QMap<int, UserItem> &_dialog) {
         beginResetModel();
         m_contacts.clear();
@@ -45,6 +52,8 @@ public:
             m_contacts.append(_dialog[keys[i]]);
             endInsertRows();
         }
+
+        qSort(m_contacts.begin(), m_contacts.end(), UserItem::userLessThan);
     }
 
     void addContact(const UserItem &_userItem) {
@@ -76,12 +85,20 @@ public:
         case UserId:
             item.m_id = value.toInt();
             break;
-        case Online:
+        case IsOnline:
             item.m_isOnline = value.toBool();
+            break;
+        case LastMessage:
+            item.m_lastMessage = value.toString();
+            break;
+        case Unread:
+            item.m_unreadCount = value.toInt();
             break;
         default:
             return false;
         }
+
+        userItemChanged(item.m_id, item);
 
         emit dataChanged(index, index, {role});
         return true;
@@ -97,8 +114,12 @@ public:
             return item.m_phone;
         case UserId:
             return item.m_id;
-        case Online:
+        case IsOnline:
             return item.m_isOnline;
+        case LastMessage:
+            return item.m_lastMessage;
+        case Unread:
+            return item.m_unreadCount;
         default:
             return {};
         }

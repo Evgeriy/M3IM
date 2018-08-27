@@ -23,20 +23,33 @@ public:
         m_phone(_phone),
         m_id(_id) {}
 
+    bool operator>=(const UserItem &_other) const {
+        return this->m_unreadCount >= _other.m_unreadCount;
+    }
+
     bool operator==(const UserItem &_other) const {
         return this->m_id == _other.m_id && this->m_phone == _other.m_phone;
     }
 
+    static bool userLessThan(const UserItem &_left, const UserItem &_right) {
+        return _left.m_unreadCount >= _right.m_unreadCount;
+    }
+
 public:
-    QString m_phone{"89264916734"};
+    QString m_phone;
     int m_id;
+    bool m_isOnline{false};
+    QString m_lastMessage{""};
+    int m_unreadCount{0};
 
     // Unused yet
     QString m_nikName;
     QString m_firstName;
     QString m_secondName;
-    bool m_isOnline{false};
+
 };
+
+
 
 struct DialogItem {
 public:
@@ -116,6 +129,8 @@ public slots:
     std::string getDescription(const nlohmann::json &_json) const;
     int getCode(const nlohmann::json &_json) const;
 
+    void onUserItemChanged(int _id, UserItem _userItem);
+
 private:
     void processResponseToRequestHello(nlohmann::json _json);
     void processResponseToRequestCode(nlohmann::json &_json);
@@ -137,7 +152,7 @@ private:
     QString m_code;                     // sms code (should received from server with code request)
     QString m_tempToken;                // temp token (should received from server with code request)
     QString m_jwt;                      // jwt token (should received from server with jwt request)
-    bool m_authStatus{false};            // authorization status (should received from server with presence request)
+    bool m_authStatus{false};           // authorization status (should received from server with presence request)
 
 private:
     UserItem m_clientData;                       // personal data   - phone and id
