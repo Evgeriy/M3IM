@@ -148,7 +148,7 @@ Page {
         }
 
         onClicked: {
-            client.sendMessage(textMessage.text, dialogHeaderLabel.text)
+            client.sendMessage(textMessage.text, dialogHeaderLabelButton.text)
             textMessage.clear();
             listView.positionViewAtEnd();
         }
