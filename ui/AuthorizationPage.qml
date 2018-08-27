@@ -1,12 +1,28 @@
 ﻿import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
+import QtQuick.Controls.Styles 1.4
+
+
 
 Page {
     id: pageId
     width: 600
     height: 400
     signal sigNextPage()
+
+    function getFontSize() {
+        return Qt.application.font.pixelSize * 1.5;
+    }
+
+    background: Rectangle {
+        width: parent.width
+        height: parent.width
+        anchors.bottom: parent.bottom
+        color: "whitesmoke"
+    }
+
+    FontLoader { id: sanFranciscoProRegular; source: "fonts/SF-Pro-Display-Regular.otf"; }
 
     header: Label {
         id: heagerLabel
@@ -24,6 +40,8 @@ Page {
 
             font.pixelSize: Qt.application.font.pixelSize * 2
             text: client.getAuthStatus() ? qsTr("Authorization complete") : qsTr("Registration")
+            font.family: sanFranciscoProRegular
+
         }
 
         verticalAlignment: Text.AlignVCenter
@@ -50,14 +68,15 @@ Page {
 
         rows: 4
         columns: 2
-        columnSpacing: 30
-        rowSpacing: 30
+        columnSpacing: 15
+        rowSpacing: 20
 
         Label {
             id: labelPhone
 
             text: qsTr("Phone:")
-            font.pixelSize: Qt.application.font.pixelSize * 2
+            font.pixelSize: getFontSize()
+            font.family: sanFranciscoProRegular
 
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -67,14 +86,23 @@ Page {
             Layout.column: 1
         }
 
-        TextEdit {
+        TextField {
             id: textEditPhone
-            text: !client.getAuthStatus() ? "___" : client.getPhone()
+            text: client.getPhone()
+            horizontalAlignment: Text.Center
 
-            font.pixelSize: Qt.application.font.pixelSize * 2
+            anchors.top: labelPhone.top
+            anchors.topMargin: -5
 
-            Layout.fillWidth: true
-            Layout.fillHeight: true
+            background: Rectangle {
+                radius: 8
+                color: "lightgray"
+                width: 145
+            }
+
+            font.pixelSize: getFontSize()
+            font.family: sanFranciscoProRegular
+
             Layout.rowSpan: 1
             Layout.columnSpan: 1
             Layout.row: 1
@@ -83,17 +111,20 @@ Page {
 
         RoundButton {
             background: Rectangle {
-                color: "#100000FF"
-                radius: 15
-                border.width: 1
-                border.color: "#1e90ff"
+                color: "#87cefa"
+                radius: 8
             }
 
             id: buttonRequestCode
             visible: !client.getAuthStatus()
 
-            text: qsTr("Request Code")
-            font.pixelSize: Qt.application.font.pixelSize * 2
+            contentItem: Text {
+                color: "white"
+                text: qsTr("Request Code")
+                font.pixelSize: getFontSize()
+                font.family: sanFranciscoProRegular
+                horizontalAlignment: Text.Center
+            }
 
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -101,6 +132,8 @@ Page {
             Layout.columnSpan: 2
             Layout.row: 2
             Layout.column: 1
+
+            width: 200
 
             onClicked: {
                 client.setPhone(textEditPhone.text);
@@ -113,7 +146,8 @@ Page {
             visible: !client.getAuthStatus()
 
             text: qsTr("Code:")
-            font.pixelSize: Qt.application.font.pixelSize * 2
+            font.pixelSize: getFontSize()
+            font.family: sanFranciscoProRegular
 
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -123,12 +157,23 @@ Page {
             Layout.column: 1
         }
 
-        TextEdit {
+        TextField {
             id: textEditCode
-            text: "___"
+            text: ""
+            horizontalAlignment: Text.Center
             visible: !client.getAuthStatus()
 
-            font.pixelSize: Qt.application.font.pixelSize * 2
+            anchors.top: labelCode.top
+            anchors.topMargin: -5
+
+            font.pixelSize: getFontSize()
+            font.family: sanFranciscoProRegular
+
+            background: Rectangle {
+                radius: 8
+                color: "lightgray"
+                width: 145
+            }
 
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -140,17 +185,23 @@ Page {
 
         RoundButton {
             background: Rectangle {
-                color: "#100000FF"
-                radius: 15
-                border.width: 1
-                border.color: "#1e90ff"
+                color: "#87cefa"
+                radius: 8
             }
+
+            width: 200
 
             id: buttonRegister
             visible: !client.getAuthStatus()
 
-            text: qsTr("Register")
-            font.pixelSize: Qt.application.font.pixelSize * 2
+
+            contentItem: Text {
+                color: "white"
+                text: qsTr("Register")
+                font.pixelSize: getFontSize()
+                font.family: sanFranciscoProRegular
+                horizontalAlignment: Text.Center
+            }
 
             Layout.fillWidth: true
             Layout.fillHeight: true

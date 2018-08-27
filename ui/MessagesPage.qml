@@ -6,6 +6,15 @@ Page {
     width: 600
     height: 400
 
+    background: Rectangle {
+        width: parent.width
+        height: 50
+        anchors.bottom: parent.bottom
+        color: "whitesmoke"
+    }
+
+    FontLoader { id: sanFranciscoProRegular; source: "fonts/SF-Pro-Display-Regular.otf"; }
+
     header: Label {
         id: dialogHeaderLabel
         height: 60
@@ -47,21 +56,22 @@ Page {
         spacing: 25
         model: dialog
 
+
         delegate: Item {
             x: 10
             width: parent.width
             height: friendMessageText.paintedHeight
-
             Row {
                 id: rowDialogItem
                 width: parent.width
 
                 Column {
+
                     id: friendMessage
                     width: rowDialogItem.width / 2 - 25
 
                     Text {
-                        x: String(model.userId) === dialogHeaderLabel.text ? parent.x : listView.width - paintedWidth - 37
+                        x: String(model.userId) === dialogHeaderLabelButton.text ? parent.x : listView.width - paintedWidth - 37
                         leftPadding: 10
                         topPadding: 10
 
@@ -77,12 +87,11 @@ Page {
                         font.bold: false
 
                         Rectangle {
-                            border.color: String(model.userId) === dialogHeaderLabel.text ? "#70ee90" : "lightgray"
-                            border.width: 1
-                            radius: 15
+                            radius: 25
                             width: parent.contentWidth + 20
                             height: parent.contentHeight + 20
-                            color: "#100000FF"
+                            color: String(model.userId) === dialogHeaderLabelButton.text ? "#87cefa" : "#90ee90"
+                            opacity: 0.5
                         }
                     }
                 }
@@ -90,28 +99,51 @@ Page {
         }
     }
 
+    RoundButton {
+        id: buttonAttach
+        anchors.left: listView.left
+        anchors.leftMargin: 10
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 7
+
+        background: Rectangle {
+            radius: 25
+            color: "lightgray"
+            width: parent.width
+            height: parent.height
+        }
+
+        width: 35
+        height: 35
+        font.pixelSize: 20
+        radius: 100
+
+        icon.width: 35
+        icon.height: 35
+        icon.source: "icons/attachment.png"
+    }
+
     TextArea {
-        leftPadding: 15
-        topPadding: 15
-        anchors.bottomMargin: 15
+        leftPadding: 20
+        topPadding: 9
+        anchors.bottomMargin: 7
 
         id: textMessage
-        anchors.left: listView.left
+        anchors.left: buttonAttach.left
+        anchors.leftMargin: 40
         anchors.bottom: parent.bottom
-        width: parent.width - 90
-        height: 70
+        width: parent.width - 115
+        height: 35
         wrapMode: Text.Wrap
         text: qsTr("Text")
         font.pixelSize: 14
 
-        Rectangle {
+        background: Rectangle {
             x: 10
-            border.color: "#1e90ff"
-            border.width: 1
-            radius: 15
+            radius: 25
+            color: "lightgray"
             width: parent.width - 5
             height: parent.height
-            color: "#100000FF"
         }
 
         Keys.onEnterPressed: {
@@ -128,24 +160,25 @@ Page {
     RoundButton {
         id: buttonSend
         anchors.left: textMessage.right
-        anchors.leftMargin: 15
+        anchors.leftMargin: 20
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 15
+        anchors.bottomMargin: 7
 
-        width: 70
-        height: 70
-        text: qsTr("Send")
-        font.pixelSize: 14
-        radius: 15
-
-        Rectangle {
-            border.color: "#1e90ff"
-            border.width: 1
-            radius: 15
+        background: Rectangle {
+            radius: 25
+            color: "lightgray"
             width: parent.width
             height: parent.height
-            color: "#100000FF"
         }
+
+        width: 35
+        height: 35
+        font.pixelSize: 20
+        radius: 100
+
+        icon.width: 35
+        icon.height: 35
+        icon.source: "icons/send.png"
 
         onClicked: {
             client.sendMessage(textMessage.text, dialogHeaderLabelButton.text)

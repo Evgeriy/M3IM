@@ -6,5 +6,8 @@
         <file>ui/MessagesPage.qml</file>
         <file>ui/Settings.qml</file>
         <file>qtquickcontrols.conf</file>
+        <file>ui/fonts/SF-Pro-Display-Regular.otf</file>
+        <file>ui/icons/attachment.png</file>
+        <file>ui/icons/send.png</file>
     </qresource>
 </RCC>

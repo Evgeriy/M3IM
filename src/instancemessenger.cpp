@@ -254,10 +254,13 @@ void InstanceMessenger::onUserItemChanged(int _id, UserItem _userItem) {
 
 void InstanceMessenger::onReceived(nlohmann::json _receivedPackage) {
     if (getCode(_receivedPackage) == -1) {
-        std::cout << "[InstanceMessenger::onReceived] " << "Server message!" << std::endl;
+        std::cout << "[InstanceMessenger::onReceived] " << "Server message:" << _receivedPackage << std::endl;
 
         if (getCommand(_receivedPackage) == NEW_MESSAGE) {
             processReceivedMessage(_receivedPackage);
+        } else if (getCommand(_receivedPackage) == USER_ONLINE
+                   || getCommand(_receivedPackage) == USER_OFFLINE) {
+            processReceivedOnlineStatus(_receivedPackage);
         }
 
     } else {
@@ -397,10 +400,6 @@ void InstanceMessenger::processReceivedMessage(nlohmann::json &_json) {
     if (userId) {
         DialogItem dialogItem(msg, userId);
 
-//        if (m_contacts.contains(userId)) {
-//            return;
-//        }
-
         // add new dialog item to local storage
         m_dialogs[userId].append(dialogItem);
 
@@ -414,6 +413,25 @@ void InstanceMessenger::processReceivedMessage(nlohmann::json &_json) {
         m_pContactsModel->setContacts(m_contacts);
         m_pContactsModel->sort(0);
     }
+}
+
+void InstanceMessenger::processReceivedOnlineStatus(nlohmann::json &_json) {
+    std::cout << "[InstanceMessenger::processReceivedOnlineStatus] " << "Json: " << _json << std::endl;
+
+    // parse payload part
+    nlohmann::json payload = _json[PAYLOAD];
+
+    // parse user id
+    int userId = 0;
+    if (payload[USER_ID].type() == nlohmann::detail::value_t::string) {
+        std::string idStr = payload[USER_ID];
+        userId = std::atoi(idStr.c_str());
+    } else {
+        userId = payload[USER_ID];
+    }
+
+    m_contacts[userId].m_isOnline = (_json[COMMAND] == USER_ONLINE);
+    m_pContactsModel->setContacts(m_contacts);
 }
 
 void InstanceMessenger::readJWTFromFile() {

@@ -6,16 +6,14 @@ ApplicationWindow {
     width: 640
     height: 480
 
+    FontLoader { id: sanFranciscoProRegular; source: "fonts/SF-Pro-Display-Regular.otf"; }
+
+    font.family: sanFranciscoProRegular
+
     minimumWidth: 640
     minimumHeight: 480
 
     title: qsTr("Instance Messenger")
-
-    Rectangle {
-        width: parent.width
-        height: parent.height
-        color: "#100000FF"
-    }
 
 
     Connections {
@@ -62,12 +60,13 @@ ApplicationWindow {
         Rectangle {
             width: parent.width
             height: parent.height
-            color: "#87cefa"
+            color: "whitesmoke"
         }
-
 
         TabButton {
             font.pixelSize: Qt.application.font.pixelSize * 1.5
+            font.family: sanFranciscoProRegular
+
             text: qsTr("Authorization")
             Rectangle {
                 width: parent.width
@@ -78,6 +77,8 @@ ApplicationWindow {
 
         TabButton {
             font.pixelSize: Qt.application.font.pixelSize * 1.5
+            font.family: sanFranciscoProRegular
+
             text: qsTr("Friends")
             Rectangle {
                 width: parent.width
@@ -92,8 +93,9 @@ ApplicationWindow {
 
         TabButton {
             font.pixelSize: Qt.application.font.pixelSize * 1.5
+            font.family: sanFranciscoProRegular
             text: qsTr("Messages")
-            Rectangle {
+            background: Rectangle {
                 width: parent.width
                 height: parent.height
                 color: "#87cefa"
@@ -102,6 +104,7 @@ ApplicationWindow {
 
         TabButton {
             font.pixelSize: Qt.application.font.pixelSize * 1.5
+            font.family: sanFranciscoProRegular
             text: qsTr("Settings")
             Rectangle {
                 width: parent.width

@@ -7,6 +7,8 @@ Page {
     height: 400
     signal sigNextPage()
 
+    FontLoader { id: sanFranciscoProRegular; source: "fonts/SF-Pro-Display-Regular.otf"; }
+
     header: Label {
         height: 60
 
@@ -36,51 +38,48 @@ Page {
     ListView {
         id: listView
         anchors.fill: parent
-        spacing: 7
+        spacing: 5
         model: contacts
 
         topMargin: 10
         bottomMargin: 10
 
-
-
         delegate: Item {
             x: 10
             width: parent.width
-            height: 75
-
-
+            height: 65
 
             Row {
                 id: rowFriendItem
                 width: parent.width
                 height: 80
-                spacing: 5
+                spacing: 10
 
                 Column {
                     id: columnAvatar
-                    width: 75
+                    width: 60
 
                     RoundButton {
                         background: Rectangle {
-                            color: model.isOnline ? model.unread ? "#87cefa": "#90ee90" : "#100000FF"
-                            border.color: "#1e90ff"
                             border.width: 1
+                            border.color: "#87cefa"
+                            color: model.isOnline ? model.unread ? "#87cefa": "#90ee90" : "lightgray"
                             radius: 100
+                            opacity: 0.7
                         }
-                        width: 75
-                        height: 75
+                        width: 60
+                        height: 60
                     }
                 }
 
                 Column {
                     id: columnFriendInfo
-                    width: rowFriendItem.width - (columnAvatar.width + columnStatus.width) - spacing * 3;
+                    width: rowFriendItem.width - (columnAvatar.width + columnStatus.width) - spacing * 5;
 
                     Text {
                         id: textContactId
                         text: model.userId
-                        font.family: "Tahoma"
+                        font.family: sanFranciscoProRegular
                         font.pixelSize: 18
                         font.bold: true
                     }
@@ -88,15 +87,14 @@ Page {
                     Text {
                         id: textContactPhone
                         text: model.phone
-                        font.family: "Tahoma"
+                        font.family: sanFranciscoProRegular
                         font.pixelSize: 15
-                        font.bold: true
                     }
 
                     Text {
                         id: textLastMessage
                         text: getLastMessage(model.lastMessage)
-                        font.family: "Tahoma"
+                        font.family: sanFranciscoProRegular
                         font.pixelSize: 15
                         color: "gray"
                     }
@@ -106,7 +104,7 @@ Page {
 
                 Column {
                     id: columnStatus
-                    width: 45
+                    width: 55
                     y: parent.y + 20
 
                     RoundButton {
@@ -116,7 +114,7 @@ Page {
                         }
 
                         text: String(model.unread)
-                        font.family: "Tahoma"
+                        font.family: sanFranciscoProRegular
                         font.pixelSize: 12
                         font.bold: true
 
@@ -131,10 +129,10 @@ Page {
                 width: parent.width
                 anchors.bottom: parent.bottom
                 anchors.left: parent.left
-                anchors.leftMargin: 80
+                anchors.leftMargin: 70
                 anchors.bottomMargin: -6
                 color: "lightgray"
-                text: "_".repeat(separator.width)
+                text: "_".repeat(separator.width / 6.8)
             }
 
             MouseArea {

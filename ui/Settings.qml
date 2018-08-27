@@ -7,6 +7,12 @@ Page {
     width: 600
     height: 400
 
+    function getFontSize() {
+        return Qt.application.font.pixelSize * 1.5;
+    }
+
+    FontLoader { id: sanFranciscoProRegular; source: "fonts/SF-Pro-Display-Regular.otf"; }
+
     header: Label {
         height: 60
         RoundButton {
@@ -55,7 +61,7 @@ Page {
 
             text: ""
             horizontalAlignment: Text.AlignHCenter
-            font.pixelSize: Qt.application.font.pixelSize * 2
+            font.pixelSize: getFontSize()
 
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -67,16 +73,19 @@ Page {
 
         RoundButton {
             id: buttonReconnect
-            text: "Reconnect"
+
             background: Rectangle {
-                color: "#100000FF"
-                radius: 15
-                border.width: 1
-                border.color: "#1e90ff"
+                color: "#87cefa"
+                radius: 8
             }
 
-
-            font.pixelSize: Qt.application.font.pixelSize * 2
+            contentItem: Text {
+                color: "white"
+                text: qsTr("Reconnect")
+                font.pixelSize: getFontSize()
+                font.family: sanFranciscoProRegular
+                horizontalAlignment: Text.Center
+            }
 
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -92,15 +101,19 @@ Page {
 
         RoundButton {
             id: buttonDisconnect
-            text: "Disconnect"
+
             background: Rectangle {
-                color: "#100000FF"
-                radius: 15
-                border.width: 1
-                border.color: "#1e90ff"
+                color: "#87cefa"
+                radius: 8
             }
 
-            font.pixelSize: Qt.application.font.pixelSize * 2
+            contentItem: Text {
+                color: "white"
+                text: qsTr("Disconnect")
+                font.pixelSize: getFontSize()
+                font.family: sanFranciscoProRegular
+                horizontalAlignment: Text.Center
+            }
 
             Layout.fillWidth: true
             Layout.fillHeight: true

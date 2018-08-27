@@ -19,6 +19,9 @@ static const std::string CODE = "code";
 static const std::string DESCRIPTION = "description";
 static const std::string DESCRIPTION_OK = "OK";
 
+static const std::string USER_ONLINE  = "user_online";
+static const std::string USER_OFFLINE  = "user_offline";
+
 static const std::string CMD_HELLO = "hello";
 static const std::string CMD_REQUEST_CODE = "request_code";
 static const std::string CMD_REQUEST_JWT  = "request_jwt";

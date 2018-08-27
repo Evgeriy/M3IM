@@ -63,25 +63,6 @@ int main(int argc, char *argv[]) {
 #elif CONSOLE_MODE
     QCoreApplication app(argc, argv);
 
-//    TCPClient *client = new TCPClient();
-//    InstanceMessenger *messenger = new InstanceMessenger(client);
-//    messenger->setJWT("eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9...");
-//    messenger->writeJWTToFile();
-//    messenger->sendRequestCode();
-
-//    nlohmann::json tempJson = R"({"command" => "hello", "code" => 200, "description" => "ok", "payload" => {"message" => "world"}})"_json;
-
-//    std::cout << tempJson["command"] << std::endl;
-
-//    int t = 9;
-//    char s[4];
-//    sprintf(s, "%04d", t);
-
-
-//    std::string ss(s);
-//    int tt = std::atoi(ss.c_str());
-//    std::cout << ss << " " << tt << std::endl;
-
 #elif QML_MODE
     // create gui app
     QGuiApplication app(argc, argv);
@@ -97,13 +78,18 @@ int main(int argc, char *argv[]) {
     TCPClient *client = new TCPClient();
     client->connectToHost("192.168.0.113", 6000);
 
-    // create messenger obj
-    InstanceMessenger *messenger = new InstanceMessenger(client);
+    if (client->getSocketState() == QAbstractSocket::ConnectedState ||
+            client->getSocketState() == QAbstractSocket::ConnectingState) {
+        // create messenger obj
+        InstanceMessenger *messenger = new InstanceMessenger(client);
 
-    // set messenger and models to qml context
-    engine.rootContext()->setContextProperty("client", messenger);
-    engine.rootContext()->setContextProperty("contacts", messenger->getContactsModel());
-    engine.rootContext()->setContextProperty("dialog", messenger->getDialogModel());
+        // set messenger and models to qml context
+        engine.rootContext()->setContextProperty("client", messenger);
+        engine.rootContext()->setContextProperty("contacts", messenger->getContactsModel());
+        engine.rootContext()->setContextProperty("dialog", messenger->getDialogModel());
+    } else {
+        std::cout << "Can not connect to the server!" << std::endl;
+    }
 
 #endif
 

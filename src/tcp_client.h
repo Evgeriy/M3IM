@@ -32,6 +32,7 @@ public:
 public:
     void reconnect();
     void disconnect();
+    QAbstractSocket::SocketState getSocketState() const;
 
 signals:
     void closed();

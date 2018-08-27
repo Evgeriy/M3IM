@@ -55,6 +55,10 @@ void TCPClient::disconnect() {
     emit statusChanged(m_pSocket->state());
 }
 
+QAbstractSocket::SocketState TCPClient::getSocketState() const {
+    return m_pSocket->state();
+}
+
 void TCPClient::connectToHost(const QString &_hostAddressString, const quint16 &_port) {
     m_hostAddress = _hostAddressString;
     m_port = _port;

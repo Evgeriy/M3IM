@@ -141,6 +141,7 @@ private:
     void processResponseToSendMessage(nlohmann::json &_json);
 
     void processReceivedMessage(nlohmann::json &_json);
+    void processReceivedOnlineStatus(nlohmann::json &_json);
 
 public:
     void readJWTFromFile();
