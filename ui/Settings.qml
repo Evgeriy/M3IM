@@ -44,7 +44,7 @@ Page {
 
     GridLayout {
         id: gridLayoutSettingsPage
-        width: 200
+        width: 350
 
         anchors {
             verticalCenter: parent.verticalCenter
@@ -52,9 +52,67 @@ Page {
         }
 
         rows: 3
-        columns: 1
-        columnSpacing: 0
+        columns: 3
+        columnSpacing: 15
         rowSpacing: 15
+
+        Label {
+            id: hostAddressLabel
+
+            text: qsTr("Host Adress:")
+            font.pixelSize: getFontSize()
+            font.family: sanFranciscoProRegular
+
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.rowSpan: 1
+            Layout.columnSpan: 1
+            Layout.row: 1
+            Layout.column: 1
+        }
+
+        TextArea {
+            id: hostIP
+            font.pixelSize: getFontSize()
+            placeholderText: "192.168.0.113"
+
+            anchors.top: hostAddressLabel.top
+            anchors.topMargin: -5
+
+            background: Rectangle {
+                radius: 25
+                color: "lightgray"
+            }
+
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.rowSpan: 1
+            Layout.columnSpan: 1
+            Layout.row: 1
+            Layout.column: 2
+        }
+
+        TextArea {
+            id: hostPort
+            font.pixelSize: getFontSize()
+            placeholderText: "6000"
+
+            anchors.top: hostAddressLabel.top
+            anchors.topMargin: -5
+
+            background: Rectangle {
+                radius: 25
+                color: "lightgray"
+            }
+
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.rowSpan: 1
+            Layout.columnSpan: 1
+            Layout.row: 1
+            Layout.column: 3
+        }
+
 
         Label {
             id: labelSocketStatus
@@ -66,8 +124,8 @@ Page {
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.rowSpan: 1
-            Layout.columnSpan: 1
-            Layout.row: 1
+            Layout.columnSpan: 3
+            Layout.row: 2
             Layout.column: 1
         }
 
@@ -90,12 +148,12 @@ Page {
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.rowSpan: 1
-            Layout.columnSpan: 1
-            Layout.row: 2
+            Layout.columnSpan: 3
+            Layout.row: 3
             Layout.column: 1
 
             onClicked: {
-                client.reconnect();
+                client.reconnect(hostIP.text, parseInt(hostPort.text));
             }
         }
 
@@ -118,8 +176,8 @@ Page {
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.rowSpan: 1
-            Layout.columnSpan: 1
-            Layout.row: 3
+            Layout.columnSpan: 3
+            Layout.row: 4
             Layout.column: 1
 
             onClicked: {
@@ -127,5 +185,4 @@ Page {
             }
         }
     }
-
 }

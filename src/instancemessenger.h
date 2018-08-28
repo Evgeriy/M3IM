@@ -49,8 +49,6 @@ public:
 
 };
 
-
-
 struct DialogItem {
 public:
     DialogItem() {}
@@ -86,7 +84,7 @@ signals:
     Q_INVOKABLE void socketStatusChanged();
 
 public:
-    Q_INVOKABLE void reconnect();
+    Q_INVOKABLE void reconnect(QString _ip, int _port);
     Q_INVOKABLE void disconnect();
 
 public:
@@ -156,7 +154,7 @@ private:
     bool m_authStatus{false};           // authorization status (should received from server with presence request)
 
 private:
-    UserItem m_clientData;                       // personal data   - phone and id
+    UserItem m_clientData;                   // personal data   - phone and id
     QMap<int, UserItem> m_contacts;          // map of contacts - key - user_id, value - userItem obj
     QMap<int, QList<DialogItem> > m_dialogs; // map of dialogs  - key - user_id, value - list of dialogItem obj
 

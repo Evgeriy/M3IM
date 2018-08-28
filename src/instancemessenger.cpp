@@ -26,29 +26,6 @@ InstanceMessenger::InstanceMessenger(TCPClient *_tcpClient, QObject *_parent) :
     m_pDialogModel = new DialogModel();
 
     connect(m_pContactsModel, &ContactsModel::userItemChanged, this, &InstanceMessenger::onUserItemChanged);
-
-//    m_clientData.m_id = "111";
-
-//    UserItem first("First", "123");
-//    m_contacts[first.m_id] = first;
-
-//    UserItem second("Second", "222");
-//    m_contacts[second.m_id] = second;
-
-//    m_pContactsModel->addContact(first);
-//    m_pContactsModel->addContact(second);
-
-//    DialogItem fDialog("First dialog - first message. First dialog - first message. First dialog - first message. First dialog - first message.", "111");
-//    DialogItem sDialog("First dialog - second message. First dialog - second message. First dialog - second message. First dialog - second message.", "123");
-
-//    DialogItem fDialog2("Second dialog - first message. Second dialog - first message. Second dialog - first message. Second dialog - first message", "111");
-//    DialogItem sDialog2("Second dialog - second message. Second dialog - second message. Second dialog - second message", "222");
-
-//    m_dialogs["123"].append(fDialog);
-//    m_dialogs["123"].append(sDialog);
-
-//    m_dialogs["222"].append(fDialog2);
-//    m_dialogs["222"].append(sDialog2);
 }
 
 InstanceMessenger::~InstanceMessenger() {
@@ -66,9 +43,9 @@ void InstanceMessenger::sendHello() {
     m_pTCPClient->send(jsonPhoneNumber);
 }
 
-void InstanceMessenger::reconnect() {
+void InstanceMessenger::reconnect(QString _ip, int _port) {
     if (m_pTCPClient != nullptr) {
-        m_pTCPClient->reconnect();
+        m_pTCPClient->reconnect(_ip, _port);
     }
 }
 

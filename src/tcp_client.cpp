@@ -35,7 +35,12 @@ TCPClient::~TCPClient() {
     delete m_pMockTCPServer;
 }
 
-void TCPClient::reconnect() {
+void TCPClient::reconnect(QString _ip, int _port) {
+    qDebug() << m_hostAddress << m_port;
+    m_hostAddress = _ip;
+    m_port = _port;
+    qDebug() << m_hostAddress << m_port;
+
     if (m_pSocket != nullptr) {
         delete m_pSocket;
     }

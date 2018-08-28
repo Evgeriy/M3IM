@@ -30,7 +30,7 @@ public:
     virtual ~TCPClient();
 
 public:
-    void reconnect();
+    void reconnect(QString _ip, int _port);
     void disconnect();
     QAbstractSocket::SocketState getSocketState() const;
 
