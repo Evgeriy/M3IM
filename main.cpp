@@ -78,18 +78,18 @@ int main(int argc, char *argv[]) {
     TCPClient *client = new TCPClient();
     client->connectToHost("192.168.0.113", 6000);
 
-    if (client->getSocketState() == QAbstractSocket::ConnectedState ||
-            client->getSocketState() == QAbstractSocket::ConnectingState) {
-        // create messenger obj
+//    if (client->getSocketState() == QAbstractSocket::ConnectedState ||
+//            client->getSocketState() == QAbstractSocket::ConnectingState) {
+//        // create messenger obj
         InstanceMessenger *messenger = new InstanceMessenger(client);
 
         // set messenger and models to qml context
         engine.rootContext()->setContextProperty("client", messenger);
         engine.rootContext()->setContextProperty("contacts", messenger->getContactsModel());
         engine.rootContext()->setContextProperty("dialog", messenger->getDialogModel());
-    } else {
-        std::cout << "Can not connect to the server!" << std::endl;
-    }
+//    } else {
+//        std::cout << "Can not connect to the server!" << std::endl;
+//    }
 
 #endif
 

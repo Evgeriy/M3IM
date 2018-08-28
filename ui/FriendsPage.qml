@@ -9,6 +9,10 @@ Page {
 
     FontLoader { id: sanFranciscoProRegular; source: "fonts/SF-Pro-Display-Regular.otf"; }
 
+    function getHeader() {
+        return String(client.getActiveDialog());
+    }
+
     header: Label {
         height: 60
 
@@ -31,12 +35,37 @@ Page {
         padding: 10
     }
 
-    function getHeader() {
-        return String(client.getActiveDialog());
+    TextArea {
+        id: phoneNumber
+        anchors.top: parent.top
+        anchors.topMargin: 10
+        anchors.left: parent.left
+        anchors.leftMargin: 20
+        width: parent.width
+        height: 35
+        font.pixelSize: 14
+
+        placeholderText: "Find by number..."
+
+
+        background: Rectangle {
+
+            radius: 25
+            color: "lightgray"
+            width: parent.width - 35
+            height: parent.height
+        }
+
+        Keys.onEnterPressed: {
+
+        }
     }
 
     ListView {
         id: listView
+        anchors.top: phoneNumber.bottom
+        anchors.topMargin: 50
+        anchors.bottom: parent.bottom
         anchors.fill: parent
         spacing: 5
         model: contacts
@@ -79,7 +108,7 @@ Page {
                     Text {
                         id: textContactId
                         text: model.userId
-                        font.family: sanFranciscoProRegular
+                        font.family: sanFranciscoProRegular.name
                         font.pixelSize: 18
                         font.bold: true
                     }
@@ -87,14 +116,14 @@ Page {
                     Text {
                         id: textContactPhone
                         text: model.phone
-                        font.family: sanFranciscoProRegular
+                        font.family: sanFranciscoProRegular.name
                         font.pixelSize: 15
                     }
 
                     Text {
                         id: textLastMessage
                         text: getLastMessage(model.lastMessage)
-                        font.family: sanFranciscoProRegular
+                        font.family: sanFranciscoProRegular.name
                         font.pixelSize: 15
                         color: "gray"
                     }
@@ -114,7 +143,7 @@ Page {
                         }
 
                         text: String(model.unread)
-                        font.family: sanFranciscoProRegular
+                        font.family: sanFranciscoProRegular.name
                         font.pixelSize: 12
                         font.bold: true
 
