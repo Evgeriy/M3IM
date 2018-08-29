@@ -10,7 +10,7 @@ Page {
         width: parent.width
         height: 50
         anchors.bottom: parent.bottom
-        color: "whitesmoke"
+        color: "white"
     }
 
     FontLoader { id: sanFranciscoProRegular; source: "fonts/SF-Pro-Display-Regular.otf"; }
@@ -88,7 +88,7 @@ Page {
 
         background: Rectangle {
             radius: 25
-            color: "lightgray"
+            color: "whitesmoke"
             width: parent.width
             height: parent.height
         }
@@ -121,7 +121,7 @@ Page {
         background: Rectangle {
             x: 10
             radius: 25
-            color: "lightgray"
+            color: "whitesmoke"
             width: parent.width - 5
             height: parent.height
         }
@@ -146,7 +146,7 @@ Page {
 
         background: Rectangle {
             radius: 25
-            color: "lightgray"
+            color: "whitesmoke"
             width: parent.width
             height: parent.height
         }

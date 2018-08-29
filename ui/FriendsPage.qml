@@ -6,15 +6,14 @@ Page {
     id: contactListPage
     width: 600
     height: 400
+
     signal sigNextPage()
-
-    property variant win;
-
-    FontLoader { id: sanFranciscoProRegular; source: "fonts/SF-Pro-Display-Regular.otf"; }
 
     function getHeader() {
         return String(client.getActiveDialog());
     }
+
+    property variant windowAddContact;
 
     CustomHeader {
         id: headerContactsPage
@@ -26,11 +25,11 @@ Page {
         anchors.top: headerContactsPage.bottom
         anchors.topMargin: 10
         anchors.left: headerContactsPage.left
-        anchors.leftMargin: 15
+        anchors.leftMargin: 20
 
         background: Rectangle {
             radius: 25
-            color: "lightgray"
+            color: "whitesmoke"
             width: parent.width
             height: parent.height
         }
@@ -46,8 +45,8 @@ Page {
 
         onClicked: {
             var component = Qt.createComponent("qrc:/ui/AddContactPage.qml");
-            win = component.createObject(contactListPage);
-            win.show();
+            windowAddContact = component.createObject(contactListPage);
+            windowAddContact.show();
         }
     }
 
@@ -66,8 +65,8 @@ Page {
 
 
         background: Rectangle {
-            radius: 25
-            color: "lightgray"
+            radius: 5
+            color: "whitesmoke"
             width: parent.width - 42
             height: parent.height
         }
@@ -132,7 +131,6 @@ Page {
                     Text {
                         id: textContactId
                         text: model.userId
-                        font.family: sanFranciscoProRegular.name
                         font.pixelSize: 18
                         font.bold: true
                     }
@@ -140,14 +138,12 @@ Page {
                     Text {
                         id: textContactPhone
                         text: model.phone
-                        font.family: sanFranciscoProRegular.name
                         font.pixelSize: 15
                     }
 
                     Text {
                         id: textLastMessage
                         text: getLastMessage(model.lastMessage)
-                        font.family: sanFranciscoProRegular.name
                         font.pixelSize: 15
                         color: "gray"
                     }
@@ -167,7 +163,6 @@ Page {
                         }
 
                         text: String(model.unread)
-                        font.family: sanFranciscoProRegular.name
                         font.pixelSize: 12
                         font.bold: true
 
@@ -184,7 +179,7 @@ Page {
                 anchors.left: parent.left
                 anchors.leftMargin: 70
                 anchors.bottomMargin: -6
-                color: "lightgray"
+                color: "whitesmoke"
                 text: "_".repeat(separator.width / 6.8)
             }
 

@@ -17,12 +17,16 @@ Rectangle {
     property alias borderColor: backgroundBorder.color
     property alias backgroundColor: background.color
 
+    // icon
+    property alias icon: roundButton.icon
+
     // signals
     signal clicked()
 
     // styled round button
     RoundButton {
         id: roundButton
+
 
         // anchors settings
         anchors {
@@ -32,6 +36,9 @@ Rectangle {
         // background settings
         background: Rectangle {
             id: background
+
+            width: parent.width
+            height: parent.height
 
             radius: 25
             color: "#00a0ff"
@@ -47,7 +54,6 @@ Rectangle {
         contentItem: Text {
             id: content
 
-            text: "Conent Text"
             color: "white"
 
             horizontalAlignment: Text.Center

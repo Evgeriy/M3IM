@@ -42,7 +42,8 @@ Page {
         Label {
             id: hostAddressLabel
 
-            text: qsTr("Host Adress:")
+            text: qsTr("host adress")
+            color: "gray"
             font.pixelSize: getFontSize()
             font.family: sanFranciscoProRegular
 
@@ -101,6 +102,7 @@ Page {
             id: labelSocketStatus
 
             text: ""
+            color: "gray"
             horizontalAlignment: Text.AlignHCenter
             font.pixelSize: getFontSize()
 
@@ -116,7 +118,7 @@ Page {
             id: buttonReconnect
 
             background: Rectangle {
-                color: "#87cefa"
+                color: "#00a0ff"
                 radius: 8
             }
 
@@ -144,7 +146,7 @@ Page {
             id: buttonDisconnect
 
             background: Rectangle {
-                color: "#87cefa"
+                color: "#00a0ff"
                 radius: 8
             }
 

@@ -5,16 +5,15 @@ ApplicationWindow {
     visible: true
     width: 640
     height: 480
-
-    FontLoader { id: sanFranciscoProRegular; source: "fonts/SF-Pro-Display-Regular.otf"; }
-
-    font.family: sanFranciscoProRegular
-
     minimumWidth: 640
     minimumHeight: 480
 
-    title: qsTr("Instance Messenger")
+    function getFontSize() {
+        return Qt.application.font.pixelSize * 1.5;
+    }
 
+
+    title: "Instance Messenger"
 
     Connections {
         target: tabAuthorization
@@ -71,7 +70,7 @@ ApplicationWindow {
             Rectangle {
                 width: parent.width
                 height: parent.height
-                color: "#87cefa"
+                color: "#00a0ff"
             }
         }
 
@@ -83,7 +82,7 @@ ApplicationWindow {
             Rectangle {
                 width: parent.width
                 height: parent.height
-                color: "#87cefa"
+                color: "#00a0ff"
             }
 
             onClicked: {
@@ -95,10 +94,11 @@ ApplicationWindow {
             font.pixelSize: Qt.application.font.pixelSize * 1.5
             font.family: sanFranciscoProRegular
             text: qsTr("Messages")
+
             background: Rectangle {
                 width: parent.width
                 height: parent.height
-                color: "#87cefa"
+                color: "#00a0ff"
             }
         }
 
@@ -109,7 +109,7 @@ ApplicationWindow {
             Rectangle {
                 width: parent.width
                 height: parent.height
-                color: "#87cefa"
+                color: "#00a0ff"
             }
         }
     }
