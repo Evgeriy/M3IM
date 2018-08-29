@@ -33,12 +33,12 @@ Rectangle {
         background: Rectangle {
             id: background
 
-            radius: 8
-            color: "#87cefa"
+            radius: 25
+            color: "#00a0ff"
             border {
                 id: backgroundBorder
 
-                width: 2
+                width: 0
                 color: "lightgray"
             }
         }

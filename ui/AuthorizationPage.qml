@@ -13,38 +13,11 @@ Page {
         return Qt.application.font.pixelSize * 1.5;
     }
 
-    background: Rectangle {
-        width: parent.width
-        height: parent.width
-        anchors.bottom: parent.bottom
-        color: "whitesmoke"
-    }
-
     FontLoader { id: sanFranciscoProRegular; source: "fonts/SF-Pro-Display-Regular.otf"; }
 
-    header: Label {
-        id: heagerLabel
-        height: 60
-
-        RoundButton {
-            background: Rectangle {
-                color: "#87cefa"
-                radius: 0
-            }
-            width: parent.width
-            height: parent.height
-            focusPolicy: Qt.NoFocus
-            anchors.horizontalCenter: parent.horizontalCenter
-
-            font.pixelSize: Qt.application.font.pixelSize * 2
-            text: client.getAuthStatus() ? qsTr("Authorization complete") : qsTr("Registration")
-            font.family: sanFranciscoProRegular
-
-        }
-
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignHCenter
-        padding: 10
+    CustomHeader {
+        id: headerAddContactPage
+        text: "Registration"
     }
 
     Connections {
@@ -56,162 +29,280 @@ Page {
         }
     }
 
-    GridLayout {
-        id: gridLayoutAuthorizationPage
+    Label {
+        id: labelPhone
 
+        // anchors settings
         anchors {
-            verticalCenter: parent.verticalCenter
-            horizontalCenter: parent.horizontalCenter
+            top: headerAddContactPage.bottom
+            topMargin: 50
+            left: parent.left
+            leftMargin: parent.width / 3
         }
 
-        rows: 4
-        columns: 2
-        columnSpacing: 15
-        rowSpacing: 20
+        // content settings
+        text: "phone"
+        color: "gray"
+        font.pixelSize: getFontSize()
+    }
 
-        Label {
-            id: labelPhone
+    CustomInput {
+        id: textEditPhone
 
-            text: qsTr("Phone:")
-            font.pixelSize: getFontSize()
-            font.family: sanFranciscoProRegular
-
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            Layout.rowSpan: 1
-            Layout.columnSpan: 1
-            Layout.row: 1
-            Layout.column: 1
+        // anchors settings
+        anchors {
+            top: labelPhone.top
+            left: labelPhone.right
+            leftMargin: 25
         }
 
-        TextField {
-            id: textEditPhone
-            text: client.getPhone()
-            horizontalAlignment: Text.Center
-
-            anchors.top: labelPhone.top
-            anchors.topMargin: -5
-
-            background: Rectangle {
-                radius: 8
-                color: "lightgray"
-                width: 145
-            }
-
-            font.pixelSize: getFontSize()
-            font.family: sanFranciscoProRegular
-
-            Layout.rowSpan: 1
-            Layout.columnSpan: 1
-            Layout.row: 1
-            Layout.column: 2
-        }
-
-        RoundButton {
-            background: Rectangle {
-                color: "#87cefa"
-                radius: 8
-            }
-
-            id: buttonRequestCode
-            visible: !client.getAuthStatus()
-
-            contentItem: Text {
-                color: "white"
-                text: qsTr("Request Code")
-                font.pixelSize: getFontSize()
-                font.family: sanFranciscoProRegular
-                horizontalAlignment: Text.Center
-            }
-
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            Layout.rowSpan: 1
-            Layout.columnSpan: 2
-            Layout.row: 2
-            Layout.column: 1
-
-            width: 200
-
-            onClicked: {
-                client.setPhone(textEditPhone.text);
-                client.sendRequestCode();
-            }
-        }
-
-        Label {
-            id: labelCode
-            visible: !client.getAuthStatus()
-
-            text: qsTr("Code:")
-            font.pixelSize: getFontSize()
-            font.family: sanFranciscoProRegular
-
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            Layout.rowSpan: 1
-            Layout.columnSpan: 1
-            Layout.row: 3
-            Layout.column: 1
-        }
-
-        TextField {
-            id: textEditCode
-            text: ""
-            horizontalAlignment: Text.Center
-            visible: !client.getAuthStatus()
-
-            anchors.top: labelCode.top
-            anchors.topMargin: -5
-
-            font.pixelSize: getFontSize()
-            font.family: sanFranciscoProRegular
-
-            background: Rectangle {
-                radius: 8
-                color: "lightgray"
-                width: 145
-            }
-
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            Layout.rowSpan: 1
-            Layout.columnSpan: 1
-            Layout.row: 3
-            Layout.column: 2
-        }
-
-        RoundButton {
-            background: Rectangle {
-                color: "#87cefa"
-                radius: 8
-            }
-
-            width: 200
-
-            id: buttonRegister
-            visible: !client.getAuthStatus()
-
-
-            contentItem: Text {
-                color: "white"
-                text: qsTr("Register")
-                font.pixelSize: getFontSize()
-                font.family: sanFranciscoProRegular
-                horizontalAlignment: Text.Center
-            }
-
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            Layout.rowSpan: 1
-            Layout.columnSpan: 2
-            Layout.row: 4
-            Layout.column: 1
-
-            onClicked: {
-                client.setCode(textEditCode.text);
-                client.sendRequestJWT();
-            }
+        // content settings
+        text: client.getPhone()
+        textFont {
+            pixelSize: getFontSize()
         }
     }
+
+    CustomButton {
+        id: buttonRequestCode
+
+        // anchors settings
+        anchors {
+            top: labelPhone.bottom
+            topMargin: 30
+            left: labelPhone.left
+            leftMargin: 10
+        }
+
+        // content settings
+        text: "Request Code"
+        textFont {
+            pixelSize: getFontSize()
+        }
+
+        // size settings
+        width: 220
+        height: 40
+
+        // slots
+        onClicked:  {
+            client.setPhone(textEditPhone.text);
+            client.sendRequestCode();
+        }
+    }
+
+    Label {
+        id: labelCode
+
+        // anchors settings
+        anchors {
+            top: buttonRequestCode.bottom
+            topMargin: 30
+            left: labelPhone.left
+        }
+
+        // content settings
+        text: "code"
+        color: "gray"
+        font.pixelSize: getFontSize()
+    }
+
+    CustomInput {
+        id: textEditCode
+
+        // anchors settings
+        anchors {
+            top: labelCode.top
+            left: labelCode.right
+            leftMargin: 25
+        }
+
+        // content settings
+        text: ""
+        textFont {
+            pixelSize: getFontSize()
+        }
+    }
+
+    CustomButton {
+        id: buttonRegister
+
+        // anchors settings
+        anchors {
+            top: labelCode.bottom
+            topMargin: 30
+            left: labelCode.left
+            leftMargin: 10
+        }
+
+        // content settings
+        text: "Register"
+        textFont {
+            pixelSize: getFontSize()
+        }
+
+        // size settings
+        width: 220
+        height: 40
+
+        // slots
+        onClicked:  {
+            client.setCode(textEditCode.text);
+            client.sendRequestJWT();
+        }
+    }
+
+
+//    GridLayout {
+//        id: gridLayoutAuthorizationPage
+
+//        anchors {
+//            verticalCenter: parent.verticalCenter
+//            horizontalCenter: parent.horizontalCenter
+//        }
+
+//        rows: 4
+//        columns: 2
+//        columnSpacing: 15
+//        rowSpacing: 30
+
+//        Label {
+//            id: labelPhone
+
+//            text: qsTr("Phone:")
+//            font.pixelSize: getFontSize()
+//            font.family: sanFranciscoProRegular
+
+//            Layout.fillWidth: true
+//            Layout.fillHeight: true
+//            Layout.rowSpan: 1
+//            Layout.columnSpan: 1
+//            Layout.row: 1
+//            Layout.column: 1
+//        }
+
+//        CustomInput {
+//            id: textEditPhone
+
+//            // content settings
+//            text: client.getPhone()
+//            textFont {
+//                pixelSize: getFontSize()
+//            }
+
+//            // layout settings
+//            Layout.fillWidth: true
+//            Layout.fillHeight: true
+//            Layout.rowSpan: 1
+//            Layout.columnSpan: 1
+//            Layout.row: 1
+//            Layout.column: 2
+//        }
+
+//        CustomButton {
+//            id: buttonRequestCode
+
+//            // anchors settings
+////            anchors {
+////                top: textEditPhone.bottom
+////                topMargin: 35
+////                left: parent.left
+////                leftMargin: 50
+////            }
+
+//            // content settings
+//            text: "Request Code"
+//            textFont {
+//                pixelSize: getFontSize()
+//            }
+
+//            // size settings
+//            width: 200
+//            height: 40
+
+//            // layout settings
+//            Layout.fillWidth: true
+//            Layout.fillHeight: true
+//            Layout.rowSpan: 1
+//            Layout.columnSpan: 2
+//            Layout.row: 2
+//            Layout.column: 1
+
+//            // slots
+//            onClicked:  {
+//                client.setPhone(textEditPhone.text);
+//                client.sendRequestCode();
+//            }
+//        }
+
+//        Label {
+//            id: labelCode
+//            visible: !client.getAuthStatus()
+
+//            text: qsTr("Code:")
+//            font.pixelSize: getFontSize()
+//            font.family: sanFranciscoProRegular
+
+//            Layout.fillWidth: true
+//            Layout.fillHeight: true
+//            Layout.rowSpan: 1
+//            Layout.columnSpan: 1
+//            Layout.row: 3
+//            Layout.column: 1
+//        }
+
+//        CustomInput {
+//            id: textEditCode
+
+//            // content settings
+//            text: ""
+//            textFont {
+//                pixelSize: getFontSize()
+//            }
+
+//            // layout settings
+//            Layout.fillWidth: true
+//            Layout.fillHeight: true
+//            Layout.rowSpan: 1
+//            Layout.columnSpan: 1
+//            Layout.row: 3
+//            Layout.column: 2
+//        }
+
+//        CustomButton {
+//            id: buttonRegister
+
+//            // anchors settings
+////            anchors {
+////                top: textEditPhone.bottom
+////                topMargin: 35
+////                left: parent.left
+////                leftMargin: 50
+////            }
+
+//            // content settings
+//            text: "Register"
+//            textFont {
+//                pixelSize: getFontSize()
+//            }
+
+//            // size settings
+//            width: 200
+//            height: 40
+
+//            // layout settings
+//            Layout.fillWidth: true
+//            Layout.fillHeight: true
+//            Layout.rowSpan: 1
+//            Layout.columnSpan: 2
+//            Layout.row: 4
+//            Layout.column: 1
+
+//            // slots
+//            onClicked:  {
+//                client.setCode(textEditCode.text);
+//                client.sendRequestJWT();
+//            }
+//        }
+//    }
 }

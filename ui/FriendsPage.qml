@@ -16,33 +16,16 @@ Page {
         return String(client.getActiveDialog());
     }
 
-    header: Label {
-        height: 60
-
-        RoundButton {
-            background: Rectangle {
-                color: "#87cefa"
-                radius: 0
-            }
-            width: parent.width
-            height: parent.height
-            focusPolicy: Qt.NoFocus
-            anchors.horizontalCenter: parent.horizontalCenter
-
-            font.pixelSize: Qt.application.font.pixelSize * 2
-            text: qsTr("Contacts")
-        }
-
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignHCenter
-        padding: 10
+    CustomHeader {
+        id: headerContactsPage
+        text: "Contacts"
     }
 
     RoundButton {
         id: buttonAddContact
-        anchors.top: parent.top
+        anchors.top: headerContactsPage.bottom
         anchors.topMargin: 10
-        anchors.left: parent.left
+        anchors.left: headerContactsPage.left
         anchors.leftMargin: 15
 
         background: Rectangle {
@@ -71,7 +54,7 @@ Page {
     TextArea {
         id: phoneNumber
         topPadding: 8
-        anchors.top: parent.top
+        anchors.top: headerContactsPage.bottom
         anchors.topMargin: 10
         anchors.left: buttonAddContact.right
         anchors.leftMargin: 15
@@ -96,10 +79,18 @@ Page {
 
     ListView {
         id: listView
-        anchors.top: phoneNumber.bottom
-        anchors.topMargin: 50
-        anchors.bottom: parent.bottom
-        anchors.fill: parent
+//        anchors.top: phoneNumber.bottom
+//        anchors.topMargin: 50
+//        anchors.bottom: parent.bottom
+
+        anchors {
+            top: phoneNumber.bottom
+            bottom: parent.bottom
+            left: parent.left
+            right: parent.right
+        }
+
+        //anchors.fill: parent
         spacing: 5
         model: contacts
 

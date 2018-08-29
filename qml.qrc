@@ -12,5 +12,7 @@
         <file>ui/icons/add.png</file>
         <file>ui/AddContactPage.qml</file>
         <file>ui/CustomButton.qml</file>
+        <file>ui/CustomInput.qml</file>
+        <file>ui/CustomHeader.qml</file>
     </qresource>
 </RCC>

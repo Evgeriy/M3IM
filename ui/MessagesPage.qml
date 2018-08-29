@@ -15,32 +15,12 @@ Page {
 
     FontLoader { id: sanFranciscoProRegular; source: "fonts/SF-Pro-Display-Regular.otf"; }
 
-    header: Label {
-        id: dialogHeaderLabel
-        height: 60
-
-        RoundButton {
-            id:dialogHeaderLabelButton
-            background: Rectangle {
-                color: "#87cefa"
-                radius: 0
-            }
-            width: parent.width
-            height: parent.height
-            focusPolicy: Qt.NoFocus
-            anchors.horizontalCenter: parent.horizontalCenter
-
-            font.pixelSize: Qt.application.font.pixelSize * 2
-            text: ""
-        }
-
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignHCenter
-        padding: 10
+    CustomHeader {
+        id: headerDialogPage
     }
 
     function setHeader(msg) {
-        dialogHeaderLabelButton.text = msg;
+        headerDialogPage.text = msg;
     }
 
     ListView {
@@ -52,7 +32,7 @@ Page {
         anchors.rightMargin: 0
         anchors.right: parent.right
         anchors.left: parent.left
-        anchors.top: parent.top
+        anchors.top: headerDialogPage.bottom
         spacing: 25
         model: dialog
 
@@ -71,7 +51,7 @@ Page {
                     width: rowDialogItem.width / 2 - 25
 
                     Text {
-                        x: String(model.userId) === dialogHeaderLabelButton.text ? parent.x : listView.width - paintedWidth - 37
+                        x: String(model.userId) === headerDialogPage.text ? parent.x : listView.width - paintedWidth - 37
                         leftPadding: 10
                         topPadding: 10
 
@@ -90,7 +70,7 @@ Page {
                             radius: 25
                             width: parent.contentWidth + 20
                             height: parent.contentHeight + 20
-                            color: String(model.userId) === dialogHeaderLabelButton.text ? "#87cefa" : "#90ee90"
+                            color: String(model.userId) === headerDialogPage.text ? "#87cefa" : "#90ee90"
                             opacity: 0.5
                         }
                     }
@@ -181,7 +161,7 @@ Page {
         icon.source: "icons/send.png"
 
         onClicked: {
-            client.sendMessage(textMessage.text, dialogHeaderLabelButton.text)
+            client.sendMessage(textMessage.text, headerDialogPage.text)
             textMessage.clear();
             listView.positionViewAtEnd();
         }

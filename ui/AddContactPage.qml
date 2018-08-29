@@ -25,41 +25,10 @@ Window {
 
     FontLoader { id: sanFranciscoProRegular; source: "fonts/SF-Pro-Display-Regular.otf"; }
 
-    TextField {
-        id: header
-
-        background: Rectangle {
-            color: "#87cefa"
-            radius: 0
-        }
-
-        horizontalAlignment: Text.horizontalCenter
-
-        enabled: false
-
+    CustomHeader {
+        id: headerAddContactPage
+        text: "Add Contact"
         width: parent.width
-        height: 60
-        anchors.top: parent.top
-        anchors.topMargin: 0
-        anchors.horizontalCenter: parent.horizontalCenter
-
-        padding: 10
-    }
-
-    Label {
-        id: headerText
-
-        horizontalAlignment: Text.horizontalCenter
-
-        anchors.top: parent.top
-        anchors.topMargin: 0
-        anchors.horizontalCenter: parent.horizontalCenter
-
-        padding: 10
-
-        text: qsTr("Add Contact")
-        font.pixelSize: Qt.application.font.pixelSize * 2
-        font.family: sanFranciscoProRegular.name
     }
 
     Label {
@@ -263,7 +232,7 @@ Window {
         modal: true
         focus: true
 
-        TextArea {
+        TextField {
             id: popupText
             text: ""
             verticalAlignment: Text.Center

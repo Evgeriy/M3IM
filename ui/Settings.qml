@@ -13,26 +13,9 @@ Page {
 
     FontLoader { id: sanFranciscoProRegular; source: "fonts/SF-Pro-Display-Regular.otf"; }
 
-    header: Label {
-        height: 60
-        RoundButton {
-            background: Rectangle {
-                color: "#87cefa"
-                radius: 0
-            }
-            width: parent.width
-            height: parent.height
-            focusPolicy: Qt.NoFocus
-            anchors.horizontalCenter: parent.horizontalCenter
-
-
-            font.pixelSize: Qt.application.font.pixelSize * 2
-            text: "Settings"
-        }
-
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignHCenter
-        padding: 10
+    CustomHeader {
+        id: headerSettingsPage
+        text: "Settings"
     }
 
     Connections {
