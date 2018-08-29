@@ -120,7 +120,7 @@ Page {
 
         background: Rectangle {
             x: 10
-            radius: 25
+            radius: 5
             color: "whitesmoke"
             width: parent.width - 5
             height: parent.height

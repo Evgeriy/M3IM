@@ -45,26 +45,18 @@ Window {
 
     }
 
-    TextField {
+    CustomInput {
         id: textEditFirstName
-        text: ""
-        horizontalAlignment: Text.Center
-        width: 200
 
-        anchors.top: parent.top
-        anchors.topMargin: 100
+        anchors.top: labelFirstName.top
         anchors.left: labelFirstName.right
-        anchors.leftMargin: 50
+        anchors.leftMargin: 60
 
-        background: Rectangle {
-            radius: 8
-            color: "lightgray"
-            width: 200
-
+        // content settings
+        text: ""
+        textFont {
+            pixelSize: getFontSize()
         }
-
-        font.pixelSize: getFontSize()
-        font.family: sanFranciscoProRegular.name
     }
 
     Label {
@@ -81,26 +73,19 @@ Window {
 
     }
 
-    TextField {
+    CustomInput {
         id: textEditLastName
-        text: ""
-        horizontalAlignment: Text.Center
-        width: 200
 
         anchors.top: labelFirstName.bottom
         anchors.topMargin: 25
-        anchors.left: labelFirstName.right
-        anchors.leftMargin: 50
+        anchors.left: labelLastName.right
+        anchors.leftMargin: 60
 
-        font.pixelSize: getFontSize()
-        font.family: sanFranciscoProRegular.name
-
-        background: Rectangle {
-            radius: 8
-            color: "lightgray"
-            width: 200
+        // content settings
+        text: ""
+        textFont {
+            pixelSize: getFontSize()
         }
-
     }
 
     Label {
@@ -116,24 +101,18 @@ Window {
         font.family: sanFranciscoProRegular.name
     }
 
-    TextField {
+    CustomInput {
         id: textEditPhone
-        text: ""
-        horizontalAlignment: Text.Center
-        width: 200
 
         anchors.top: labelLastName.bottom
         anchors.topMargin: 25
         anchors.left: labelFirstName.right
-        anchors.leftMargin: 50
+        anchors.leftMargin: 60
 
-        font.pixelSize: getFontSize()
-        font.family: sanFranciscoProRegular.name
-
-        background: Rectangle {
-            radius: 8
-            color: "lightgray"
-            width: 200
+        // content settings
+        text: ""
+        textFont {
+            pixelSize: getFontSize()
         }
     }
 
@@ -143,7 +122,7 @@ Window {
         // anchors settings
         anchors {
             top: textEditPhone.bottom
-            topMargin: 35
+            topMargin: 80
             left: parent.left
             leftMargin: 50
         }
@@ -155,7 +134,7 @@ Window {
         }
 
         // size settings
-        width: 150
+        width: 135
         height: 40
 
         // slots
@@ -171,7 +150,7 @@ Window {
         // anchors settings
         anchors {
             top: textEditPhone.bottom
-            topMargin: 35
+            topMargin: 80
             left: buttonCancel.right
             leftMargin: 45
         }
@@ -183,7 +162,7 @@ Window {
         }
 
         // size settings
-        width: 150
+        width: 135
         height: 40
 
         // slots
@@ -276,7 +255,7 @@ Window {
 
             // size settings
             width: 130
-            height: 35
+            height: 40
 
             // slots
             onClicked:  {
@@ -306,7 +285,7 @@ Window {
 
             // size settings
             width: 130
-            height: 35
+            height: 40
 
             // slots
             onClicked:  {
@@ -339,7 +318,7 @@ Window {
 
             // size settings
             width: 130
-            height: 35
+            height: 40
 
             // slots
             onClicked:  {
@@ -368,7 +347,7 @@ Window {
 
             // size settings
             width: 130
-            height: 35
+            height: 40
 
             // slots
             onClicked:  {
