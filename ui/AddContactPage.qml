@@ -13,24 +13,17 @@ Window {
     maximumHeight: addContactPage.height
     maximumWidth: addContactPage.width
 
-    property var firstName;
-    property var lastName;
-    property var phone;
+    property string firstName: "";
+    property string lastName: "";
+    property string phone: "";
+
+    modality: Qt.WindowModal
 
     function getFontSize() {
         return Qt.application.font.pixelSize * 1.5;
     }
 
     FontLoader { id: sanFranciscoProRegular; source: "fonts/SF-Pro-Display-Regular.otf"; }
-
-    Connections {
-        target: client
-        onAuthStatusChanged: {
-            heagerLabel.text = client.getAuthStatus() ? qsTr("Authorization complete") : qsTr("Registration")
-            buttonRequestCode.visible = !buttonRequestCode.visible;
-            console.log(buttonRequestCode.visible);
-        }
-    }
 
     TextField {
         id: header
@@ -152,7 +145,6 @@ Window {
         text: qsTr("Phone:")
         font.pixelSize: getFontSize()
         font.family: sanFranciscoProRegular.name
-
     }
 
     TextField {
@@ -176,81 +168,94 @@ Window {
         }
     }
 
-    RoundButton {
-        background: Rectangle {
-            color: "#87cefa"
-            radius: 8
-        }
-
+    CustomButton {
         id: buttonCancel
 
-        anchors.top: textEditPhone.bottom
-        anchors.topMargin: 35
-        anchors.left: parent.left
-        anchors.leftMargin: 50
-
-        contentItem: Text {
-            color: "white"
-            text: qsTr("Cancel")
-            font.pixelSize: getFontSize()
-            font.family: sanFranciscoProRegular.name
-            horizontalAlignment: Text.Center
+        // anchors settings
+        anchors {
+            top: textEditPhone.bottom
+            topMargin: 35
+            left: parent.left
+            leftMargin: 50
         }
 
-        width: 150
+        // content settings
+        text: "Cancel"
+        textFont {
+            pixelSize: getFontSize()
+        }
 
-        onClicked: {
+        // size settings
+        width: 150
+        height: 40
+
+        // slots
+        onClicked:  {
+            // close contact window
             addContactPage.close();
         }
     }
 
-    RoundButton {
-        background: Rectangle {
-            color: "#87cefa"
-            radius: 8
+    CustomButton {
+        id: buttonAddContact
+
+        // anchors settings
+        anchors {
+            top: textEditPhone.bottom
+            topMargin: 35
+            left: buttonCancel.right
+            leftMargin: 45
         }
 
-        id: buttonAdd
-
-        anchors.top: textEditPhone.bottom
-        anchors.topMargin: 35
-        anchors.left: buttonCancel.right
-        anchors.leftMargin: 45
-
-        contentItem: Text {
-            color: "white"
-            text: qsTr("Add Contact")
-            font.pixelSize: getFontSize()
-            font.family: sanFranciscoProRegular.name
-            horizontalAlignment: Text.Center
+        // content settings
+        text: "Add Contact"
+        textFont {
+            pixelSize: getFontSize()
         }
 
+        // size settings
         width: 150
+        height: 40
 
-        onClicked: {
+        // slots
+        onClicked:  {
+            // capture contact data
             firstName = textEditFirstName.text;
-            lastName = textEditLastName.text;
-            phone = textEditPhone.text;
+            lastName  = textEditLastName.text;
+            phone     = textEditPhone.text;
 
+            // try add new contact
             var result = client.addNewContact(firstName, lastName, phone);
 
-            if (result === 1) {
-                popupText.text = "This person is not registered on Instance Messenger yet.\nYou will be able to send them a IM message as sonn as they sign up."
-                popup.open();
-            } else if (result === 2) {
-                popupText.text = "This person is already registered on Instance Messenger";
-                buttonSend.visible = true;
-                popup.open();
-            } else if (result === 3) {
-                popupText.text = "This person add to contact list";
-                buttonSend.visible = true;
-                popup.open();
+            // configure popup message and popupAddContactResult optional button
+            var popupTextMessage = "";
+            switch (result) {
+              case 1:
+                popupTextMessage = "This person is not registered on Instance Messenger yet";
+                buttonInvite.visible = true;
+                break;
+              case 2:
+                popupTextMessage = "This person is already registered on Instance Messenger";
+                buttonShowDialog.visible = true;
+                break;
+              case 3:
+                popupTextMessage = "This person add to contact list";
+                buttonShowContact.visible = true;
+                break;
+              default:
+                break;
+            }
+
+            // check popup message
+            if (popupTextMessage.length > 0) {
+                popupText.text = popupTextMessage;
+                popupAddContactResult.open();
             }
         }
     }
 
     Popup {
-        id: popup
+        id: popupAddContactResult
         x: 75
         y: 150
         width: 300
@@ -284,66 +289,122 @@ Window {
             }
         }
 
-        RoundButton {
-            background: Rectangle {
-                color: "#87cefa"
-                radius: 8
-            }
-
+        CustomButton {
             id: buttonOk
 
-            anchors.top: popupText.bottom
-            anchors.topMargin: 15
-            anchors.left: popupText.left
-
-            contentItem: Text {
-                color: "white"
-                text: qsTr("Ok")
-                font.pixelSize: getFontSize()
-                font.family: sanFranciscoProRegular.name
-                horizontalAlignment: Text.Center
+            // anchors settings
+            anchors {
+                top: popupText.bottom
+                topMargin: 15
+                left: popupText.left
             }
 
-            width: 130
+            // content settings
+            text: "Ok"
+            textFont {
+                pixelSize: getFontSize()
+            }
 
-            onClicked: {
-                popup.close();
+            // size settings
+            width: 130
+            height: 35
+
+            // slots
+            onClicked:  {
+                // close popup and add contact window
+                popupAddContactResult.close();
                 addContactPage.close();
             }
         }
 
-        RoundButton {
-            background: Rectangle {
-                color: "#87cefa"
-                radius: 8
-            }
-
-            id: buttonSend
+        CustomButton {
+            id: buttonShowDialog
             visible: false
 
-            anchors.top: popupText.bottom
-            anchors.topMargin: 15
-            anchors.left: buttonOk.right
-            anchors.leftMargin: 10
-
-            contentItem: Text {
-                color: "white"
-                text: qsTr("Send")
-                font.pixelSize: getFontSize()
-                font.family: sanFranciscoProRegular.name
-                horizontalAlignment: Text.Center
+            // anchors settings
+            anchors {
+                top: popupText.bottom
+                topMargin: 15
+                left: buttonOk.right
+                leftMargin: 10
             }
 
+            // content settings
+            text: "Show Dialog"
+            textFont {
+                pixelSize: getFontSize()
+            }
+
+            // size settings
             width: 130
+            height: 35
 
-            onClicked: {
-                popup.close();
-                addContactPage.close();
+            // slots
+            onClicked:  {
+                popupAddContactResult.close();          // close popup
+                addContactPage.close();                 // close contact window
 
+                var userId = client.getUserId(firstName, phone); // get id of added user
+                client.setActiveDialog(userId);                  // set active dialog
+                contactListPage.sigNextPage();                   // show dialog page
+            }
+        }
 
+        CustomButton {
+            id: buttonShowContact
+            visible: false
 
-                client.setActiveDialog(client.getUserId(firstName, phone));
-                pageId.sigNextPage();
+            // anchors settings
+            anchors {
+                top: popupText.bottom
+                topMargin: 15
+                left: buttonOk.right
+                leftMargin: 10
+            }
+
+            // content settings
+            text: "Show Contact"
+            textFont {
+                pixelSize: getFontSize()
+            }
+
+            // size settings
+            width: 130
+            height: 35
+
+            // slots
+            onClicked:  {
+                popupAddContactResult.close();          // close popup
+                addContactPage.close();                 // close contact window
+            }
+        }
+
+        CustomButton {
+            id: buttonInvite
+            visible: false
+
+            // anchors settings
+            anchors {
+                top: popupText.bottom
+                topMargin: 15
+                left: buttonOk.right
+                leftMargin: 10
+            }
+
+            // content settings
+            text: "Invite"
+            textFont {
+                pixelSize: getFontSize()
+            }
+
+            // size settings
+            width: 130
+            height: 35
+
+            // slots
+            onClicked:  {
+                popupAddContactResult.close();          // close popup
+                addContactPage.close();                 // close contact window
             }
         }
 

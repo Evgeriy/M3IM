@@ -11,5 +11,6 @@
         <file>ui/icons/send.png</file>
         <file>ui/icons/add.png</file>
         <file>ui/AddContactPage.qml</file>
+        <file>ui/CustomButton.qml</file>
     </qresource>
 </RCC>

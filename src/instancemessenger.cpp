@@ -189,6 +189,7 @@ int InstanceMessenger::getUserId(const QString &_firstName, const QString &_phon
                 m_contacts[keys[i]].m_phone == _phone) {
             qDebug() << m_contacts[keys[i]].m_id;
             retValue = m_contacts[keys[i]].m_id;
+            break;
         }
     }
 

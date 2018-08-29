@@ -1,8 +1,9 @@
 ﻿import QtQuick 2.9
+import QtQuick.Controls 1.4
 import QtQuick.Controls 2.2
 
 Page {
-    id: pageId
+    id: contactListPage
     width: 600
     height: 400
     signal sigNextPage()
@@ -62,7 +63,7 @@ Page {
 
         onClicked: {
             var component = Qt.createComponent("qrc:/ui/AddContactPage.qml");
-            win = component.createObject(pageId);
+            win = component.createObject(contactListPage);
             win.show();
         }
     }
@@ -201,7 +202,7 @@ Page {
                 onClicked: {
                     client.setActiveDialog(model.userId);
                     model.unread = 0;
-                    pageId.sigNextPage();
+                    contactListPage.sigNextPage();
                 }
             }
         }
