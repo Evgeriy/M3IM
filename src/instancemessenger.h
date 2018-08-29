@@ -95,6 +95,7 @@ public:
     Q_INVOKABLE void sendRequestContacts();
     Q_INVOKABLE void sendRequestDialog(const int &_userId);
     Q_INVOKABLE void sendMessage(const QString &_message, const int &_userId);
+    Q_INVOKABLE int addNewContact(const QString &_firstName, const QString &_lastName, const QString &_phone);
 
 public:
     Q_INVOKABLE QString getCode() const { return m_code; }
@@ -110,6 +111,7 @@ public:
     Q_INVOKABLE DialogModel* getDialogModel() { return m_pDialogModel; }
 
     Q_INVOKABLE int getActiveDialog() const { return m_activeDialog; }
+    Q_INVOKABLE int getUserId(const QString &_firstName, const QString &_phone);
 
 public:
     Q_INVOKABLE void setCode(const QString &_code) { m_code = _code; }

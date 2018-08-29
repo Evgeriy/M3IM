@@ -175,6 +175,28 @@ void InstanceMessenger::sendMessage(const QString &_message, const int &_userId)
     m_pTCPClient->send(resultPackage);
 }
 
+int InstanceMessenger::addNewContact(const QString &_firstName, const QString &_lastName, const QString &_phone) {
+    return 2;
+}
+
+int InstanceMessenger::getUserId(const QString &_firstName, const QString &_phone) {
+    int retValue = -1;
+    QList<int> keys = m_contacts.keys();
+
+    for (int i = 0; i < keys.size(); ++i) {
+        qDebug() << _phone << m_contacts[keys[i]].m_phone;
+        if (/*m_contacts[keys[i]].m_firstName == _firstName &&*/
+                m_contacts[keys[i]].m_phone == _phone) {
+            qDebug() << m_contacts[keys[i]].m_id;
+            retValue = m_contacts[keys[i]].m_id;
+        }
+    }
+
+
+    qDebug() << retValue;
+    return retValue;
+}
+
 void InstanceMessenger::setActiveDialog(const int &_userId) {
     m_activeDialog = _userId;
     m_pDialogModel->setDialog(m_dialogs[m_activeDialog]);

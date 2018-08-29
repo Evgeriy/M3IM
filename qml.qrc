@@ -9,5 +9,7 @@
         <file>ui/fonts/SF-Pro-Display-Regular.otf</file>
         <file>ui/icons/attachment.png</file>
         <file>ui/icons/send.png</file>
+        <file>ui/icons/add.png</file>
+        <file>ui/AddContactPage.qml</file>
     </qresource>
 </RCC>

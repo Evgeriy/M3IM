@@ -7,6 +7,8 @@ Page {
     height: 400
     signal sigNextPage()
 
+    property variant win;
+
     FontLoader { id: sanFranciscoProRegular; source: "fonts/SF-Pro-Display-Regular.otf"; }
 
     function getHeader() {
@@ -35,13 +37,44 @@ Page {
         padding: 10
     }
 
-    TextArea {
-        id: phoneNumber
+    RoundButton {
+        id: buttonAddContact
         anchors.top: parent.top
         anchors.topMargin: 10
         anchors.left: parent.left
-        anchors.leftMargin: 20
-        width: parent.width
+        anchors.leftMargin: 15
+
+        background: Rectangle {
+            radius: 25
+            color: "lightgray"
+            width: parent.width
+            height: parent.height
+        }
+
+        width: 35
+        height: 35
+        font.pixelSize: 20
+        radius: 100
+
+        icon.width: 35
+        icon.height: 35
+        icon.source: "icons/add.png"
+
+        onClicked: {
+            var component = Qt.createComponent("qrc:/ui/AddContactPage.qml");
+            win = component.createObject(pageId);
+            win.show();
+        }
+    }
+
+    TextArea {
+        id: phoneNumber
+        topPadding: 8
+        anchors.top: parent.top
+        anchors.topMargin: 10
+        anchors.left: buttonAddContact.right
+        anchors.leftMargin: 15
+        width: parent.width - 42
         height: 35
         font.pixelSize: 14
 
@@ -49,10 +82,9 @@ Page {
 
 
         background: Rectangle {
-
             radius: 25
             color: "lightgray"
-            width: parent.width - 35
+            width: parent.width - 42
             height: parent.height
         }
 

@@ -3,8 +3,6 @@ import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 import QtQuick.Controls.Styles 1.4
 
-
-
 Page {
     id: pageId
     width: 600
@@ -216,8 +214,4 @@ Page {
             }
         }
     }
-
-
-
-
 }
