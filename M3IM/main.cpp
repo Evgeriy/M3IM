@@ -2,6 +2,7 @@
 #include <QCoreApplication>
 #include <QFile>
 #include <QDebug>
+#include <QFont>
 
 // ANOTHERS
 #include "mock_tcp_server.hpp"

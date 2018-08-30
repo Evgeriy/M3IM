@@ -44,7 +44,7 @@ Page {
         icon.source: "icons/add.png"
 
         onClicked: {
-            var component = Qt.createComponent("qrc:/ui/AddContactPage.qml");
+            var component = Qt.createComponent("qrc:/ui/AddContactWindow.qml");
             windowAddContact = component.createObject(contactListPage);
             windowAddContact.show();
         }
@@ -78,9 +78,6 @@ Page {
 
     ListView {
         id: listView
-//        anchors.top: phoneNumber.bottom
-//        anchors.topMargin: 50
-//        anchors.bottom: parent.bottom
 
         anchors {
             top: phoneNumber.bottom

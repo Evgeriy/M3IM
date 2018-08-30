@@ -17,18 +17,13 @@ Rectangle {
     property alias borderColor: backgroundBorder.color
     property alias backgroundColor: background.color
 
-    // signals
-    signal clicked()
-
     // styled round button
     TextField {
         id: input
 
-        topPadding: 0
-
         // size settings
         width: 145
-        height: 35
+        height: 40
 
         // background settings
         background: Rectangle {

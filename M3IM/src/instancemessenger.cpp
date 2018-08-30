@@ -20,7 +20,6 @@ InstanceMessenger::InstanceMessenger(TCPClient *_tcpClient, QObject *_parent) :
     connect(m_pTCPClient, &TCPClient::received, this, &InstanceMessenger::onReceived);
     connect(m_pTCPClient, &TCPClient::statusChanged, this, &InstanceMessenger::onSocketStateChanged);
 
-
     m_clientData.m_isOnline = true;
     m_pContactsModel = new ContactsModel();
     m_pDialogModel = new DialogModel();
@@ -216,6 +215,7 @@ void InstanceMessenger::onSocketStateChanged(QAbstractSocket::SocketState _socke
         break;
     case QAbstractSocket::ConnectedState:
         m_socketState = "ConnectedState";
+        sendRequestPresence();
         break;
     case QAbstractSocket::BoundState:
         m_socketState = "BoundState";
@@ -443,8 +443,6 @@ void InstanceMessenger::readJWTFromFile() {
         m_jwt.remove("\n");
         std::cout << m_clientData.m_phone.toStdString() << std::endl;
         std::cout << m_jwt.toStdString() << std::endl;
-
-        sendRequestPresence();
     }
 }
 

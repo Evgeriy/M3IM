@@ -10,9 +10,10 @@
         <file>ui/icons/attachment.png</file>
         <file>ui/icons/send.png</file>
         <file>ui/icons/add.png</file>
-        <file>ui/AddContactPage.qml</file>
+        <file>ui/AddContactWindow.qml</file>
         <file>ui/CustomButton.qml</file>
         <file>ui/CustomInput.qml</file>
         <file>ui/CustomHeader.qml</file>
+        <file>ui/CustomLabel.qml</file>
     </qresource>
 </RCC>

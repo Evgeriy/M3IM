@@ -6,43 +6,51 @@ import QtQuick.Window 2.3
 
 Window {
     id: addContactPage
-    width: 450
-    height: 350
-    minimumHeight: addContactPage.height
-    minimumWidth: addContactPage.width
-    maximumHeight: addContactPage.height
-    maximumWidth: addContactPage.width
 
-    property string firstName: "";
-    property string lastName: "";
-    property string phone: "";
+    // properties
+    property int windowWidth: 450
+    property int windowHeight: 350
+    property int fontPixelSize: Qt.application.font.pixelSize * 1.5
+    property string firstName: ""
+    property string lastName: ""
+    property string phone: ""
+
+    // size settings
+    width: windowWidth
+    height: windowHeight
+
+    minimumWidth: windowWidth
+    minimumHeight: windowHeight
+
+    maximumWidth: windowWidth
+    maximumHeight: windowHeight
 
     modality: Qt.WindowModal
 
-    function getFontSize() {
-        return Qt.application.font.pixelSize * 1.5;
-    }
-
-    FontLoader { id: sanFranciscoProRegular; source: "fonts/SF-Pro-Display-Regular.otf"; }
-
+    // window header title
     CustomHeader {
         id: headerAddContactPage
-        text: "Add Contact"
+
+        // size settings
         width: parent.width
+
+        // content settings
+        text: "Add Contact"
     }
 
-    Label {
+    CustomLabel {
         id: labelFirstName
 
-        anchors.top: parent.top
-        anchors.topMargin: 100
-        anchors.left: parent.left
-        anchors.leftMargin: 50
+        // anchors settings
+        anchors {
+            top: parent.top
+            topMargin: 100
+            left: parent.left
+            leftMargin: 50
+        }
 
-        text: qsTr("First Name:")
-        font.pixelSize: getFontSize()
-        font.family: sanFranciscoProRegular.name
-
+        // content settings
+        text: "first name"
     }
 
     CustomInput {
@@ -59,18 +67,19 @@ Window {
         }
     }
 
-    Label {
+    CustomLabel {
         id: labelLastName
 
-        anchors.top: labelFirstName.bottom
-        anchors.topMargin: 25
-        anchors.left: parent.left
-        anchors.leftMargin: 50
+        // anchors settings
+        anchors {
+            top: labelFirstName.bottom
+            topMargin: 25
+            left: parent.left
+            leftMargin: 50
+        }
 
-        text: qsTr("Last Name:")
-        font.pixelSize: getFontSize()
-        font.family: sanFranciscoProRegular.name
-
+        // content settings
+        text: "last name"
     }
 
     CustomInput {
@@ -88,17 +97,19 @@ Window {
         }
     }
 
-    Label {
+    CustomLabel {
         id: labelPhone
 
-        anchors.top: labelLastName.bottom
-        anchors.topMargin: 25
-        anchors.left: parent.left
-        anchors.leftMargin: 50
+        // anchors settings
+        anchors {
+            top: labelLastName.bottom
+            topMargin: 25
+            left: parent.left
+            leftMargin: 50
+        }
 
-        text: qsTr("Phone:")
-        font.pixelSize: getFontSize()
-        font.family: sanFranciscoProRegular.name
+        // content settings
+        text: "phone"
     }
 
     CustomInput {
